@@ -73,6 +73,16 @@ defmodule Microformats2Test do
         rels: %{"me" => ["http://blub"]}})
   end
 
+  test "duplicate value doesn't overwrite the first one" do
+    assert(Microformats2.parse("""
+<a rel="me" hreflang="de" href="http://blub">blub</a>
+<a rel="me" hreflang="en" href="http://blub">blah</a>
+""") ==
+      %{items: [],
+        rel_urls: %{"http://blub" => %{rels: ["me"], text: "blub", hreflang: "de"}},
+        rels: %{"me" => ["http://blub"]}})
+
+  end
 
   test "parse generates an absolute URL" do
     assert false, "TODO"

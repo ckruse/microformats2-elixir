@@ -47,20 +47,20 @@ defmodule Microformats2 do
     else
       Map.put(map, :rel_urls,
               Map.put(map[:rel_urls], url,
-                      %{rels: Enum.uniq(map[:rel_urls][url][:rels] ++ rel)}))
+                      Map.put(map[:rel_urls][url], :rels, Enum.uniq(map[:rel_urls][url][:rels] ++ rel))))
     end
   end
 
   defp save_text(map, element, url) do
     text = Floki.text(element)
 
-    if String.strip(to_string(text)) == "" do
+    if String.strip(to_string(text)) == "" or map[:rel_urls][url][:text] != nil do
       map
     else
       Map.put(map, :rel_urls,
               Map.put(map[:rel_urls], url,
                       Map.put(map[:rel_urls][url], :text, text)))
-      end
+    end
   end
 
   defp save_attributes(map, element, url) do
@@ -68,7 +68,8 @@ defmodule Microformats2 do
                 save_text(map, element, url),
       fn(att, nmap) ->
         val = Floki.attribute(element, att) |> List.first
-        if String.strip(to_string(val)) == "" do
+
+        if String.strip(to_string(val)) == "" or nmap[:rel_urls][url][String.to_atom(att)] != nil do
           nmap
         else
           Map.put(nmap, :rel_urls,
