@@ -51,16 +51,30 @@ defmodule Microformats2 do
     end
   end
 
-  defp save_attributes(map, element, url) do
-    Enum.reduce(["hreflang", "media", "title", "type"], map, fn(att, nmap) ->
-      val = Floki.attribute(element, att) |> List.first
-      if String.strip(to_string(val)) == "" do
-        nmap
-      else
-        Map.put(nmap, :rel_urls,
-                Map.put(nmap[:rel_urls], url,
-                        Map.put(nmap[:rel_urls][url], String.to_atom(att), val)))
+  defp save_text(map, element, url) do
+    text = Floki.text(element)
+
+    if String.strip(to_string(text)) == "" do
+      map
+    else
+      Map.put(map, :rel_urls,
+              Map.put(map[:rel_urls], url,
+                      Map.put(map[:rel_urls][url], :text, text)))
       end
-    end)
+  end
+
+  defp save_attributes(map, element, url) do
+    Enum.reduce(["hreflang", "media", "title", "type"],
+                save_text(map, element, url),
+      fn(att, nmap) ->
+        val = Floki.attribute(element, att) |> List.first
+        if String.strip(to_string(val)) == "" do
+          nmap
+        else
+          Map.put(nmap, :rel_urls,
+                  Map.put(nmap[:rel_urls], url,
+                          Map.put(nmap[:rel_urls][url], String.to_atom(att), val)))
+        end
+      end)
   end
 end
