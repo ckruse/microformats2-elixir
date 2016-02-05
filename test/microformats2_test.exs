@@ -84,8 +84,18 @@ defmodule Microformats2Test do
 
   end
 
+  test "parse ignores template elements" do
+    assert(Microformats2.parse("""
+<a rel="me" href="http://blub">blub</a>
+<template><a rel="moo" href="http://blub">blub</a></template>
+""") ==
+      %{items: [],
+        rel_urls: %{"http://blub" => %{rels: ["me"], text: "blub"}},
+        rels: %{"me" => ["http://blub"]}})
+  end
+
   test "parse generates an absolute URL" do
-    assert false, "TODO"
+    assert false, "TODO implement absolute URLs"
   end
 
 end
