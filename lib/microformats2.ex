@@ -11,6 +11,7 @@ defmodule Microformats2 do
       Enum.filter(fn(element) ->
         rel = Floki.attribute(element, "rel") |> List.first
         href = Floki.attribute(element, "href") |> List.first
+
         String.strip(to_string(rel)) != "" and String.strip(to_string(href)) != ""
       end) |>
       Enum.reduce(%{rels: %{}, rel_urls: %{}}, fn(element, acc) ->
@@ -19,7 +20,8 @@ defmodule Microformats2 do
 
         acc |>
           save_urls_by_rels(rel, url) |>
-          save_rels_by_urls(rel, url)
+          save_rels_by_urls(rel, url) |>
+          save_attributes(element, url)
       end)
 
     link_rels
@@ -47,5 +49,18 @@ defmodule Microformats2 do
               Map.put(map[:rel_urls], url,
                       %{rels: Enum.uniq(map[:rel_urls][url][:rels] ++ rel)}))
     end
+  end
+
+  defp save_attributes(map, element, url) do
+    Enum.reduce(["hreflang", "media", "title", "type"], map, fn(att, nmap) ->
+      val = Floki.attribute(element, att) |> List.first
+      if String.strip(to_string(val)) == "" do
+        nmap
+      else
+        Map.put(nmap, :rel_urls,
+                Map.put(nmap[:rel_urls], url,
+                        Map.put(nmap[:rel_urls][url], String.to_atom(att), val)))
+      end
+    end)
   end
 end

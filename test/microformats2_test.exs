@@ -5,7 +5,7 @@ defmodule Microformats2Test do
   test "parse successfully parses rels" do
     assert(Microformats2.parse("<a rel=\"me\" href=\"http://blub\">blub</a>") ==
       %{items: [],
-        rel_urls: %{"http://blub" => ["me"]},
+        rel_urls: %{"http://blub" => %{ rels: ["me"] }},
         rels: %{"me" => ["http://blub"]}})
   end
 
@@ -15,8 +15,8 @@ defmodule Microformats2Test do
 <a rel=\"me\" href=\"http://blah\">blub</a>
 """) ==
       %{items: [],
-        rel_urls: %{"http://blub" => ["me"],
-                    "http://blah" => ["me"]},
+        rel_urls: %{"http://blub" => %{ rels: ["me"] },
+                    "http://blah" => %{ rels: ["me"] }},
         rels: %{"me" => ["http://blub", "http://blah"]}})
   end
 
@@ -26,7 +26,7 @@ defmodule Microformats2Test do
 <a rel=\"me\" href=\"http://blub\">blub</a>
 """) ==
       %{items: [],
-        rel_urls: %{"http://blub" => ["me"]},
+        rel_urls: %{"http://blub" => %{rels: ["me"]}},
         rels: %{"me" => ["http://blub"]}})
   end
 
@@ -36,10 +36,42 @@ defmodule Microformats2Test do
 <a rel=\"moo\" href=\"http://blub\">blub</a>
 """) ==
       %{items: [],
-        rel_urls: %{"http://blub" => ["me", "moo"]},
+        rel_urls: %{"http://blub" => %{ rels: ["me", "moo"] }},
         rels: %{"me" => ["http://blub"],
                 "moo" => ["http://blub"]}})
   end
+
+  test "parse successfully parses rels with attributes" do
+    assert(Microformats2.parse("<a rel=\"me\" media=\"video\" href=\"http://blub\">blub</a>") ==
+      %{items: [],
+        rel_urls: %{"http://blub" => %{ rels: ["me"], media: "video" }},
+        rels: %{"me" => ["http://blub"]}})
+
+    assert(Microformats2.parse("<a rel=\"me\" hreflang=\"de\" href=\"http://blub\">blub</a>") ==
+      %{items: [],
+        rel_urls: %{"http://blub" => %{ rels: ["me"], hreflang: "de" }},
+        rels: %{"me" => ["http://blub"]}})
+
+    assert(Microformats2.parse("<a rel=\"me\" title=\"blub\" href=\"http://blub\">blub</a>") ==
+      %{items: [],
+        rel_urls: %{"http://blub" => %{ rels: ["me"], title: "blub" }},
+        rels: %{"me" => ["http://blub"]}})
+
+    assert(Microformats2.parse("<a rel=\"me\" type=\"text/html\" href=\"http://blub\">blub</a>") ==
+      %{items: [],
+        rel_urls: %{"http://blub" => %{ rels: ["me"], type: "text/html" }},
+        rels: %{"me" => ["http://blub"]}})
+
+    assert(Microformats2.parse("<a rel=\"me\" hreflang=\"de\" media=\"video\" title=\"blub\" type=\"text/html\" href=\"http://blub\">blub</a>") ==
+      %{items: [],
+        rel_urls: %{"http://blub" => %{ rels: ["me"],
+                                        media: "video",
+                                        title: "blub",
+                                        hreflang: "de",
+                                        type: "text/html" }},
+        rels: %{"me" => ["http://blub"]}})
+  end
+
 
   test "parse generates an absolute URL" do
     assert false, "TODO"
