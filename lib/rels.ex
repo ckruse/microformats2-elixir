@@ -8,7 +8,7 @@ defmodule Microformats2.Rels do
         String.strip(to_string(rel)) != "" and String.strip(to_string(href)) != ""
       end) |>
       Enum.reduce(%{rels: %{}, rel_urls: %{}}, fn(element, acc) ->
-        rel = Floki.attribute(element, "rel") |> List.first |> String.split(" ", trim: true)
+        rel = Microformats2.attr_list(element, "rel")
         url = Floki.attribute(element, "href") |> List.first # TODO convert to absolute URL
 
         acc |>

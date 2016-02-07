@@ -6,5 +6,7 @@ defmodule Microformats2 do
     %{items: [], rels: rels[:rels], rel_urls: rels[:rel_urls]}
   end
 
-
+  def attr_list(node, attr \\ "class") do
+    Floki.attribute(node, attr) |> List.first |> to_string |> String.split(" ", trim: true)
+  end
 end
