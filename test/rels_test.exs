@@ -1,6 +1,6 @@
-defmodule Microformats2Test do
+defmodule Microformats2RelsTest do
   use ExUnit.Case
-  doctest Microformats2
+  doctest Microformats2.Rels
 
   test "parse successfully parses rels" do
     assert(Microformats2.parse("<a rel=\"me\" href=\"http://blub\">blub</a>") ==
