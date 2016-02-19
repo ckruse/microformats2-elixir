@@ -4,15 +4,15 @@ A [Microformats2](http://microformats.org/wiki/microformats-2) parser for Elixir
 
 ## Installation
 
-Since it is not yet [available in Hex](https://hex.pm/), the package can only be installed via git:
+This parser is [available in Hex](https://hex.pm/packages/microformats2):
 
   1. Add microformats2 to your list of dependencies in `mix.exs`:
 
         def deps do
-          [{:microformats2, github: "ckruse/microformats2-elixir"}]
+          [{:microformats2, "~> 0.0.1"}]
         end
 
-Once the parser leaves beta it will be available on Hex.
+
 
 ## Usage
 
