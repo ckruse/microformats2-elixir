@@ -1,5 +1,5 @@
 defmodule Microformats2.Rels do
-  def parse(doc) do
+  def parse(doc, base_url) do
     link_rels = Floki.find(doc, "[rel][href]") |>
       Enum.filter(fn(element) ->
         rel = Floki.attribute(element, "rel") |> List.first
@@ -9,7 +9,7 @@ defmodule Microformats2.Rels do
       end) |>
       Enum.reduce(%{rels: %{}, rel_urls: %{}}, fn(element, acc) ->
         rel = Microformats2.attr_list(element, "rel")
-        url = Floki.attribute(element, "href") |> List.first # TODO convert to absolute URL
+        url = Floki.attribute(element, "href") |> List.first |> Microformats2.abs_uri(base_url, doc)
 
         acc |>
           save_urls_by_rels(rel, url) |>

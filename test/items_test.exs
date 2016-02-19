@@ -19,19 +19,21 @@ defmodule Microformats2ItemsTest do
 </html>
 """
 
-    ret = Microformats2.parse(str)
+    ret = Microformats2.parse(str, "http://localhost")
     assert not Enum.empty?(ret[:items])
   end
 
   test "minimal h-card" do
     assert %{rels: _, rel_urls: _, items: [%{type: ["h-card"], properties: %{
                                                 name: ["Frances Berriman"]}}]} =
-      Microformats2.parse("<span class=\"h-card\">Frances Berriman</span>")
+      Microformats2.parse("<span class=\"h-card\">Frances Berriman</span>",
+                          "http://localhost")
 
     assert %{rels: _, rel_urls: _, items: [%{type: ["h-card"], properties: %{
                                                 name: ["Ben Ward"],
                                                 url: ["http://benward.me"]}}]} =
-      Microformats2.parse("<a class=\"h-card\" href=\"http://benward.me\">Ben Ward</a>")
+      Microformats2.parse("<a class=\"h-card\" href=\"http://benward.me\">Ben Ward</a>",
+                          "http://localhost")
 
     assert %{rels: _, rel_urls: _, items: [%{type: ["h-card"], properties: %{
                                                 name: ["Rohit Khare"],
@@ -42,7 +44,8 @@ defmodule Microformats2ItemsTest do
  <img alt="Rohit Khare"
       src="https://s3.amazonaws.com/twitter_production/profile_images/53307499/180px-Rohit-sq_bigger.jpg">
 </a>
-""")
+""",
+                          "http://localhost")
   end
 
   test "successfully parses a h-card with author name" do
@@ -56,7 +59,7 @@ defmodule Microformats2ItemsTest do
                                                 org: ["Mozilla Foundation"],
                                                 note: ["Mitchell is responsible for setting the direction and scope of the Mozilla Foundation and its activities."],
                                                 category: ["Strategy",
-                                                           "Leadership"]}}]} = Microformats2.parse(str)
+                                                           "Leadership"]}}]} = Microformats2.parse(str, "http://localhost")
   end
 
   test "successfully parses a h-event combined with h-card" do
@@ -74,7 +77,7 @@ defmodule Microformats2ItemsTest do
                                                                            url: ["http://geoloqi.com/"],
                                                                            street_address: ["920 SW 3rd Ave. Suite 400"],
                                                                            locality: ["Portland"],
-                                                                           region: ["Oregon"]}}]}}]} = Microformats2.parse(str)
+                                                                           region: ["Oregon"]}}]}}]} = Microformats2.parse(str, "http://localhost")
   end
 
   test "successfully parses a h-card with org" do
@@ -83,7 +86,7 @@ defmodule Microformats2ItemsTest do
     assert %{rels: _, rel_urls: _, items: [%{type: ["h-card"], properties: %{
                                                 name: ["Mitchell Baker"],
                                                 url: ["http://blog.lizardwrangler.com/"],
-                                                org: ["Mozilla Foundation"]}}]} = Microformats2.parse(str)
+                                                org: ["Mozilla Foundation"]}}]} = Microformats2.parse(str, "http://localhost")
   end
 
   test "successfully parses a h-card with h-card and org" do
@@ -96,7 +99,7 @@ defmodule Microformats2ItemsTest do
                                                         type: ["h-card"],
                                                         properties: %{
                                                           name: ["Mozilla Foundation"],
-                                                          url: ["http://mozilla.org/"]}}]}}]} = Microformats2.parse(str)
+                                                          url: ["http://mozilla.org/"]}}]}}]} = Microformats2.parse(str, "http://localhost")
   end
 
   test "successfully parses a nested h-card h-org h-card" do
@@ -110,7 +113,7 @@ defmodule Microformats2ItemsTest do
                                                          type: ["h-card", "h-org"],
                                                          properties: %{
                                                            name: ["Mozilla Foundation"],
-                                                           url: ["http://mozilla.org/"]}}]}}]} = Microformats2.parse(str)
+                                                           url: ["http://mozilla.org/"]}}]}}]} = Microformats2.parse(str, "http://localhost")
   end
 
   test "successfully parses a nested h-card w/o attached property" do
@@ -122,6 +125,6 @@ defmodule Microformats2ItemsTest do
                                              children: [%{type: ["h-card"], properties: %{
                                                              name: ["Mozilla Foundation"],
                                                              url: ["http://mozilla.org/"]}}]}]} =
-      Microformats2.parse(str)
+      Microformats2.parse(str, "http://localhost")
   end
 end
