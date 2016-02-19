@@ -99,7 +99,7 @@ defmodule Microformats2ItemsTest do
                                                           url: ["http://mozilla.org/"]}}]}}]} = Microformats2.parse(str)
   end
 
-  test "successfully parses a nested h-chard h-org h-card" do
+  test "successfully parses a nested h-card h-org h-card" do
     {:ok, str} = File.read "./test/documents/nested_h_card_h_org_h_card.html"
 
     assert %{rels: _, rel_urls: _, items: [%{type: ["h-card"], properties: %{
