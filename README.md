@@ -51,6 +51,30 @@ It will parse the object to a structure like that:
 
 We need [Floki](https://github.com/philss/floki) for HTML parsing.
 
+## Features
+
+Implemented:
+
+- [parsing depth first, doc order](http://microformats.org/wiki/microformats2-parsing#parse_a_document_for_microformats)
+- [parsing a p- property](http://microformats.org/wiki/microformats2-parsing#parsing_a_p-_property)
+- [parsing a u- property](http://microformats.org/wiki/microformats2-parsing#parsing_a_u-_property)
+- [parsing a dt- property](http://microformats.org/wiki/microformats2-parsing#parsing_a_dt-_property)
+- [parsing a e- property](http://microformats.org/wiki/microformats2-parsing#parsing_an_e-_property)
+- [parsing implied properties](http://microformats.org/wiki/microformats-2-parsing#parsing_for_implied_properties)
+- nested properties
+- nested microformat with associated property
+- dynamic creation of properties
+- [rel](http://microformats.org/wiki/rel)
+- nested microformat without associated property
+
+Not implemented:
+
+- [normalize u-* property values](http://microformats.org/wiki/microformats2-parsing-faq#normalizing_u-.2A_property_values)
+- [value-class-pattern](http://microformats.org/wiki/value-class-pattern)
+- [include-pattern](http://microformats.org/wiki/include-pattern)
+- recognition of [vendor extensions](http://microformats.org/wiki/microformats2#VENDOR_EXTENSIONS)
+- backwards compatible support for microformats v1
+
 ## License
 
 This software is licensed under the [AGPL3](http://choosealicense.com/licenses/agpl-3.0/).
