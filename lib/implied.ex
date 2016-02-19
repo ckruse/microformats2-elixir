@@ -6,7 +6,7 @@ defmodule Microformats2.Items.ImpliedProperties do
   end
 
   defp implied_url_property(entry, root) do
-    if entry[:properties][:root] == nil do
+    if entry[:properties][:url] == nil do
       val = implied_url_attrval(root)
 
       url = if Microformats2.blank?(val) do
