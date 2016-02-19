@@ -127,4 +127,18 @@ defmodule Microformats2ItemsTest do
                                                              url: ["http://mozilla.org/"]}}]}]} =
       Microformats2.parse(str, "http://localhost")
   end
+
+  test "resolves explicit url to absolute URL" do
+    assert %{rels: _, rel_urls: _, items: [%{type: ["h-card"], properties: %{
+                                                name: ["Ben Ward"],
+                                                url: ["http://benward.me/foo"]}}]} =
+      Microformats2.parse("<div class=\"h-card\"><a class=\"u-url\" href=\"/foo\">Ben Ward</a></div>",
+                          "http://benward.me")
+
+    assert %{rels: _, rel_urls: _, items: [%{type: ["h-card"], properties: %{
+                                                name: ["Ben Ward"],
+                                                url: ["http://benward.me/foo"]}}]} =
+      Microformats2.parse("<div class=\"h-card\"><a href=\"/foo\">Ben Ward</a></div>",
+                          "http://benward.me")
+  end
 end

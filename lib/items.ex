@@ -1,15 +1,15 @@
 defmodule Microformats2.Items do
-  def parse(nodes, items \\ [])
-  def parse([head | tail], items) when is_bitstring(head), do: parse(tail, items)
-  def parse([head | tail], items) do
-    parse(tail, parse(head, items))
+  def parse(nodes, url, doc, items \\ [])
+  def parse([head | tail], doc, url, items) when is_bitstring(head), do: parse(tail, doc, url, items)
+  def parse([head | tail], doc, url, items) do
+    parse(tail, doc, url, parse(head, doc, url, items))
   end
 
-  def parse([], items) do
+  def parse([], _, _, items) do
     items
   end
 
-  def parse(root, items) do
+  def parse(root, doc, url, items) do
     root_classes = Microformats2.attr_list(root) |>
       Enum.filter(fn(class_name) -> Microformats2.is_rootlevel?(class_name) end) |>
       Enum.sort
@@ -17,10 +17,11 @@ defmodule Microformats2.Items do
     {_, _, children} = root
 
     if not Enum.empty?(root_classes) do
-      entry = parse_sub(children, %{type: root_classes,
-                                    properties: %{}}) |> Microformats2.Items.ImpliedProperties.parse(root)
+      entry = parse_sub(children, doc, url,
+                        %{type: root_classes,
+                          properties: %{}}) |> Microformats2.Items.ImpliedProperties.parse(root, url, doc)
 
-      children = parse(children, [])
+      children = parse(children, doc, url, [])
 
       if not Microformats2.blank?(children) do
         items ++ [Map.put(entry, :children, children)]
@@ -29,13 +30,13 @@ defmodule Microformats2.Items do
       end
 
     else
-      parse(children, items)
+      parse(children, doc, url, items)
     end
   end
 
-  defp parse_sub([], item), do: item
-  defp parse_sub([child | children], item) when is_bitstring(child), do: parse_sub(children, item)
-  defp parse_sub([child | children], item) do
+  defp parse_sub([], _, _, item), do: item
+  defp parse_sub([child | children], doc, url, item) when is_bitstring(child), do: parse_sub(children, doc, url, item)
+  defp parse_sub([child | children], doc, url, item) do
     props = Microformats2.attr_list(child) |>
       Enum.filter(fn("p-" <> _) -> true
         ("u-" <> _) -> true
@@ -44,7 +45,7 @@ defmodule Microformats2.Items do
         (_) -> false end) |>
       Enum.reduce(item[:properties], fn(class, acc) ->
         prop = if Microformats2.is_rootlevel?(child) do
-            p = parse(child, []) |> List.first
+            p = parse(child, doc, url, []) |> List.first
 
             val = cond do
               Microformats2.is_a?(class, "p") and p[:properties][:name] != nil ->
@@ -61,7 +62,7 @@ defmodule Microformats2.Items do
 
             Map.put(p, :value, val)
           else
-            parse_prop(class, child)
+            parse_prop(class, child, doc, url)
           end
 
         key = strip_prefix(class) |> to_key |> String.to_atom
@@ -69,10 +70,10 @@ defmodule Microformats2.Items do
         Map.put(acc, key, val ++ [prop])
       end)
 
-    parse_sub(children, Map.put(item, :properties, props))
+    parse_sub(children, doc, url, Map.put(item, :properties, props))
   end
 
-  defp parse_prop("p-" <> _, child) do
+  defp parse_prop("p-" <> _, child, _, _) do
     # TODO value pattern parsing
     {elem, _, _} = child
     title = Floki.attribute(child, "title") |> List.first
@@ -89,14 +90,14 @@ defmodule Microformats2.Items do
   end
 
 
-  defp parse_prop("u-" <> _, child = {elem, _, _}) do
+  defp parse_prop("u-" <> _, child = {elem, _, _}, doc, url) do
     href   = Floki.attribute(child, "href")   |> List.first
     src    = Floki.attribute(child, "src")    |> List.first
     data   = Floki.attribute(child, "data")   |> List.first
     poster = Floki.attribute(child, "poster") |> List.first
     title  = Floki.attribute(child, "title")  |> List.first
     value  = Floki.attribute(child, "value")  |> List.first
-    
+
     cond do
       Enum.member?(["a", "area"], elem) and not Microformats2.blank?(href) ->
         href
@@ -113,10 +114,10 @@ defmodule Microformats2.Items do
         value
       true ->
         text_content(child) |> String.strip
-    end
+    end |> Microformats2.abs_uri(url, doc)
   end
 
-  defp parse_prop("dt-" <> _, child = {elem, _, _}) do
+  defp parse_prop("dt-" <> _, child = {elem, _, _}, _, _) do
     dt = Floki.attribute(child, "datetime")
     title = Floki.attribute(child, "title")
     value = Floki.attribute(child, "value")
@@ -133,12 +134,12 @@ defmodule Microformats2.Items do
     end
   end
 
-  defp parse_prop("e-" <> _, child) do
+  defp parse_prop("e-" <> _, child, _, _) do
     %{html: Floki.raw_html(child),
       text: Floki.text(child)}
   end
 
-  defp parse_prop(_, _), do: nil
+  defp parse_prop(_, _, _, _), do: nil
 
 
 

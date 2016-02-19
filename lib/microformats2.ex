@@ -3,7 +3,7 @@ defmodule Microformats2 do
   def parse(content, url) when is_bitstring(content) do
     doc = Floki.parse(content) |> Floki.filter_out("template")
     rels = Microformats2.Rels.parse(doc, url)
-    items = Microformats2.Items.parse(doc)
+    items = Microformats2.Items.parse(doc, doc, url)
 
     %{items: items, rels: rels[:rels], rel_urls: rels[:rel_urls]}
   end

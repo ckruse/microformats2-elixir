@@ -1,11 +1,11 @@
 defmodule Microformats2.Items.ImpliedProperties do
-  def parse(entry, root) do
+  def parse(entry, root, url, doc) do
     implied_name_property(entry, root) |>
       implied_photo_property(root) |>
-      implied_url_property(root)
+      implied_url_property(root, url, doc)
   end
 
-  defp implied_url_property(entry, root) do
+  defp implied_url_property(entry, root, doc_url, doc) do
     if entry[:properties][:url] == nil do
       val = implied_url_attrval(root)
 
@@ -18,7 +18,7 @@ defmodule Microformats2.Items.ImpliedProperties do
       if Microformats2.blank?(url) do
         entry
       else
-        Map.put(entry, :properties, Map.put(entry[:properties], :url, [url]))
+        Map.put(entry, :properties, Map.put(entry[:properties], :url, [Microformats2.abs_uri(url, doc_url, doc)]))
       end
     else
       entry
