@@ -35,15 +35,17 @@ Give the parser an HTML string:
 
 It will parse the object to a structure like that:
 
-    %{rels: [], rel_urls: [], items: [%{type: ["h-card"], properties: %{
-                                         photo: ["https://webfwd.org/content/about-experts/300.mitchellbaker/mentor_mbaker.jpg"],
-                                         name: ["Mitchell Baker"],
-                                         url: ["http://blog.lizardwrangler.com/",
-                                               "https://twitter.com/MitchellBaker"],
-                                         org: ["Mozilla Foundation"],
-                                         note: ["Mitchell is responsible for setting the direction and scope of the Mozilla Foundation and its activities."],
-                                         category: ["Strategy",
-                                                    "Leadership"]}}]} = Microformats2.parse(str)
+    %{rels: [],
+      rel_urls: [],
+      items: [%{type: ["h-card"],
+                properties: %{photo: ["https://webfwd.org/content/about-experts/300.mitchellbaker/mentor_mbaker.jpg"],
+                              name: ["Mitchell Baker"],
+                              url: ["http://blog.lizardwrangler.com/",
+                                    "https://twitter.com/MitchellBaker"],
+                              org: ["Mozilla Foundation"],
+                              note: ["Mitchell is responsible for setting the direction and scope of the Mozilla Foundation and its activities."],
+                              category: ["Strategy",
+                                         "Leadership"]}}]}
 
 ## Dependencies
 
