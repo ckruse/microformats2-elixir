@@ -1,17 +1,8 @@
 defmodule Microformats2.Items do
-  @root_level ["h-adr", "h-card", "h-entry", "h-event", "h-feed",
-               "h-geo", "h-item", "h-listing", "h-product",
-               "h-recipe", "h-resume", "h-review", "h-review-aggregate"]
-
   def parse(nodes, items \\ [])
+  def parse([head | tail], items) when is_bitstring(head), do: parse(tail, items)
   def parse([head | tail], items) do
-    nitems = if not is_bitstring(head) do
-      parse(head, items)
-    else
-      items
-    end
-
-    parse(tail, nitems)
+    parse(tail, parse(head, items))
   end
 
   def parse([], items) do
@@ -19,9 +10,9 @@ defmodule Microformats2.Items do
   end
 
   def parse(root, items) do
-    classes = Microformats2.attr_list(root)
-    root_classes = Set.intersection(Enum.into(classes, HashSet.new),
-                                    Enum.into(@root_level, HashSet.new)) |> Enum.sort
+    root_classes = Microformats2.attr_list(root) |>
+      Enum.filter(fn(class_name) -> Microformats2.is_rootlevel?(class_name) end) |>
+      Enum.sort
 
     {_, _, children} = root
 
@@ -46,7 +37,27 @@ defmodule Microformats2.Items do
         ("e-" <> _) -> true
         (_) -> false end) |>
       Enum.reduce(item[:properties], fn(class, acc) ->
-        prop = parse_prop(class, child)
+        prop = if Microformats2.is_rootlevel?(child) do
+            p = parse(child, []) |> List.first
+
+            val = cond do
+              Microformats2.is_a?(class, "p") and p[:properties][:name] != nil ->
+                List.first(p[:properties][:name])
+              Microformats2.is_a?(class, "u") and p[:properties][:url] != nil ->
+                List.first(p[:properties][:url])
+              Microformats2.is_a?(class, "e") -> #and p[:properties][:url] != nil ->
+                # TODO handle
+                nil
+              true ->
+                # TODO handle
+                nil
+            end
+
+            Map.put(p, :value, val)
+          else
+            parse_prop(class, child)
+          end
+
         key = strip_prefix(class) |> to_key |> String.to_atom
         val = if acc[key] != nil, do: acc[key], else: []
         Map.put(acc, key, val ++ [prop])
@@ -144,7 +155,6 @@ defmodule Microformats2.Items do
   end
 
   def text_content(child, text \\ "")
-
   def text_content(child = {elem, _, children}, text) do
     txt = if elem == "img" do
       alt = Floki.attribute(child, "alt")
@@ -161,7 +171,6 @@ defmodule Microformats2.Items do
       text_content(child, acc)
     end)
   end
-
   def text_content(child, text) when is_bitstring(child) do
     text <> child
   end

@@ -175,9 +175,7 @@ defmodule Microformats2.Items.ImpliedProperties do
       fn({el, _, _}) -> el == name
         (v) when is_bitstring(v) -> false
       end) |>
-      Enum.filter(fn(el) ->
-        not (Microformats2.attr_list(el, "class") |> Enum.any?(fn(cls) -> Regex.match?(~r/^h-/, cls) end))
-      end) |>
+      Enum.filter(fn(el) -> not Microformats2.is_rootlevel?(el) end) |>
       Enum.filter(fn(el) -> Enum.count(Floki.attribute(el, attr)) > 0 end)
   end
 

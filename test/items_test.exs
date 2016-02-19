@@ -59,25 +59,23 @@ defmodule Microformats2ItemsTest do
                                                            "Leadership"]}}]} = Microformats2.parse(str)
   end
 
-  # test "successfully parses a h-event combined with h-card" do
-  #   {:ok, str} = File.read "./test/documents/h_event_combined_h_card.html"
+  test "successfully parses a h-event combined with h-card" do
+    {:ok, str} = File.read "./test/documents/h_event_combined_h_card.html"
 
-  #   assert %{rels: _, rel_urls: _, items: [%{type: ["h-event"], properties: %{
-  #                                               name: ["IndieWebCamp 2012"],
-  #                                               url: ["http://indiewebcamp.com/2012"],
-  #                                               start: ["2012-06-30"],
-  #                                               end: ["2012-07-01"],
-  #                                               location: [%{
-  #                                                             value: "Geoloqi, 920 SW 3rd Ave. Suite 400, Portland, OR",
-  #                                                             type: ["h-card"],
-  #                                                             properties: %{
-  #                                                               name: ["Geoloqi"],
-  #                                                               org: ["Geoloqi"],
-  #                                                               url: ["http://geoloqi.com/"],
-  #                                                               street_address: ["920 SW 3rd Ave. Suite 400"],
-  #                                                               locality: ["Portland"],
-  #                                                               region: ["Oregon"]}}]}}]} = Microformats2.parse(str)
-  # end
+    assert %{rels: _, rel_urls: _, items: [%{type: ["h-event"], properties: %{
+                                                name: ["IndieWebCamp 2012"],
+                                                url: ["http://indiewebcamp.com/2012"],
+                                                start: ["2012-06-30"],
+                                                end: ["2012-07-01"],
+                                                location: [%{value: "Geoloqi",
+                                                             type: ["h-card"],
+                                                             properties: %{name: ["Geoloqi"],
+                                                                           org: ["Geoloqi"],
+                                                                           url: ["http://geoloqi.com/"],
+                                                                           street_address: ["920 SW 3rd Ave. Suite 400"],
+                                                                           locality: ["Portland"],
+                                                                           region: ["Oregon"]}}]}}]} = Microformats2.parse(str)
+  end
 
   test "successfully parses a h-card with org" do
     {:ok, str} = File.read "./test/documents/h_card_org.html"
@@ -88,17 +86,31 @@ defmodule Microformats2ItemsTest do
                                                 org: ["Mozilla Foundation"]}}]} = Microformats2.parse(str)
   end
 
-  # test "successfully parses a h-card with h-card and org" do
-  #   {:ok, str} = File.read "./test/documents/h_card_with_h_card_org.html"
+  test "successfully parses a h-card with h-card and org" do
+    {:ok, str} = File.read "./test/documents/h_card_with_h_card_org.html"
 
-  #   assert %{rels: _, rel_urls: _, items: [%{type: ["h-card"], properties: %{
-  #                                               name: ["Mitchell Baker"],
-  #                                               url: ["http://blog.lizardwrangler.com/"],
-  #                                               org: [%{value: "Mozilla Foundation",
-  #                                                       type: ["h-card"],
-  #                                                       properties: %{
-  #                                                         name: ["Mozilla Foundation"],
-  #                                                         url: ["http://mozilla.org/"]}}]}}]} = Microformats2.parse(str)
-  # end
+    assert %{rels: _, rel_urls: _, items: [%{type: ["h-card"], properties: %{
+                                                name: ["Mitchell Baker"],
+                                                url: ["http://blog.lizardwrangler.com/"],
+                                                org: [%{value: "Mozilla Foundation",
+                                                        type: ["h-card"],
+                                                        properties: %{
+                                                          name: ["Mozilla Foundation"],
+                                                          url: ["http://mozilla.org/"]}}]}}]} = Microformats2.parse(str)
+  end
+
+  test "successfully parses a nested h-chard h-org h-card" do
+    {:ok, str} = File.read "./test/documents/nested_h_card_h_org_h_card.html"
+
+    assert %{rels: _, rel_urls: _, items: [%{type: ["h-card"], properties: %{
+                                                name: ["Mitchell Baker"],
+                                                url: ["http://blog.lizardwrangler.com/"],
+                                                org: [%{
+                                                         value: "Mozilla Foundation",
+                                                         type: ["h-card", "h-org"],
+                                                         properties: %{
+                                                           name: ["Mozilla Foundation"],
+                                                           url: ["http://mozilla.org/"]}}]}}]} = Microformats2.parse(str)
+  end
 
 end
