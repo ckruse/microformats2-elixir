@@ -49,7 +49,8 @@ It will parse the object to a structure like that:
 
 ## Dependencies
 
-We need [Floki](https://github.com/philss/floki) for HTML parsing.
+We need [Floki](https://github.com/philss/floki) for HTML parsing and
+[HTTPotion](https://github.com/myfreeweb/httpotion) for parsing URLs.
 
 ## Features
 

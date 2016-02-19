@@ -1,6 +1,16 @@
 
 defmodule Microformats2 do
-  def parse(content, url) when is_bitstring(content) do
+  def parse(url) do
+    response = HTTPotion.get url
+
+    if HTTPotion.Response.success?(response) do
+      parse(response.body, url)
+    else
+      :error
+    end
+  end
+
+  def parse(content, url) do
     doc = Floki.parse(content) |> Floki.filter_out("template")
     rels = Microformats2.Rels.parse(doc, url)
     items = Microformats2.Items.parse(doc, doc, url)
