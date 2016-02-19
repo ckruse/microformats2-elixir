@@ -113,4 +113,15 @@ defmodule Microformats2ItemsTest do
                                                            url: ["http://mozilla.org/"]}}]}}]} = Microformats2.parse(str)
   end
 
+  test "successfully parses a nested h-card w/o attached property" do
+    {:ok, str} = File.read "./test/documents/h_card_org_h_card.html"
+
+    assert %{rels: _, rel_urls: _, items: [%{type: ["h-card"], properties: %{
+                                               name: ["Mitchell Baker"],
+                                               url: ["http://blog.lizardwrangler.com/"]},
+                                             children: [%{type: ["h-card"], properties: %{
+                                                             name: ["Mozilla Foundation"],
+                                                             url: ["http://mozilla.org/"]}}]}]} =
+      Microformats2.parse(str)
+  end
 end

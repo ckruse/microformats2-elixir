@@ -20,7 +20,13 @@ defmodule Microformats2.Items do
       entry = parse_sub(children, %{type: root_classes,
                                     properties: %{}}) |> Microformats2.Items.ImpliedProperties.parse(root)
 
-      items ++ [entry]
+      children = parse(children, [])
+
+      if not Microformats2.blank?(children) do
+        items ++ [Map.put(entry, :children, children)]
+      else
+        items ++ [entry]
+      end
 
     else
       parse(children, items)
