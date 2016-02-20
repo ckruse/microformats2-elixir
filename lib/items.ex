@@ -167,7 +167,7 @@ defmodule Microformats2.Items do
         alt
       else
         Floki.attribute(child, "src")
-      end
+      end |> List.first
     else
       ""
     end
