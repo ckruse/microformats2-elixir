@@ -34,7 +34,7 @@ defmodule Microformats2.Items do
   defp parse_sub([], _, _, item), do: item
   defp parse_sub([{:comment, _} | children], doc, url, item), do: parse_sub(children, doc, url, item)
   defp parse_sub([child | children], doc, url, item) when is_bitstring(child), do: parse_sub(children, doc, url, item)
-  defp parse_sub([child | children], doc, url, item) do
+  defp parse_sub([child = {_, _, child_children} | children], doc, url, item) do
     props = Microformats2.attr_list(child) |>
       Enum.filter(fn("p-" <> _) -> true
         ("u-" <> _) -> true
@@ -68,7 +68,14 @@ defmodule Microformats2.Items do
         Map.put(acc, key, val ++ [prop])
       end)
 
-    parse_sub(children, doc, url, Map.put(item, :properties, props))
+    propped_item = Map.put(item, :properties, props)
+    n_item = if Microformats2.is_rootlevel?(child) do
+      propped_item
+    else
+      parse_sub(child_children, doc, url, propped_item)
+    end
+
+    parse_sub(children, doc, url, n_item)
   end
 
   defp parse_prop("p-" <> _, child, _, _) do
