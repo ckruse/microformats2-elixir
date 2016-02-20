@@ -11,7 +11,11 @@ defmodule Microformats2 do
   end
 
   def parse(content, url) do
-    doc = Floki.parse(content) |> Floki.filter_out("template")
+    doc = Floki.parse(content) |>
+      Floki.filter_out("template") |>
+      Floki.filter_out("style") |>
+      Floki.filter_out("script")
+
     rels = Microformats2.Rels.parse(doc, url)
     items = Microformats2.Items.parse(doc, doc, url)
 
