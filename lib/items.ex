@@ -122,11 +122,11 @@ defmodule Microformats2.Items do
 
     cond do
       Enum.member?(["time", "ins", "del"], elem) and not Microformats2.blank?(dt) ->
-        dt
+        dt |> List.first
       elem == "abbr" and not Microformats2.blank?(title) ->
-        title
+        title |> List.first
       Enum.member?(["data", "input"], elem) and not Microformats2.blank?(value) ->
-        value
+        value |> List.first
       true ->
         text_content(child) |> String.strip
     end
