@@ -1,13 +1,10 @@
 defmodule Microformats2.Items do
-  def parse(nodes, url, doc, items \\ [])
+  def parse(nodes, doc, url, items \\ [])
   def parse([head | tail], doc, url, items) when is_bitstring(head), do: parse(tail, doc, url, items)
-  def parse([head | tail], doc, url, items) do
-    parse(tail, doc, url, parse(head, doc, url, items))
-  end
-
-  def parse([], _, _, items) do
-    items
-  end
+  #def parse([{:comment, _} | tail], doc, url, items), do: parse(tail, doc, url, items)
+  def parse([head | tail], doc, url, items), do: parse(tail, doc, url, parse(head, doc, url, items))
+  def parse([], _, _, items), do: items
+  def parse({:comment, _}, _, _, items), do: items
 
   def parse(root, doc, url, items) do
     root_classes = Microformats2.attr_list(root) |>
@@ -35,6 +32,7 @@ defmodule Microformats2.Items do
   end
 
   defp parse_sub([], _, _, item), do: item
+  defp parse_sub([{:comment, _} | children], doc, url, item), do: parse_sub(children, doc, url, item)
   defp parse_sub([child | children], doc, url, item) when is_bitstring(child), do: parse_sub(children, doc, url, item)
   defp parse_sub([child | children], doc, url, item) do
     props = Microformats2.attr_list(child) |>
