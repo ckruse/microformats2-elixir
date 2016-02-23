@@ -1,10 +1,8 @@
 defmodule Microformats2.Items do
   def parse(nodes, doc, url, items \\ [])
   def parse([head | tail], doc, url, items) when is_bitstring(head), do: parse(tail, doc, url, items)
-  #def parse([{:comment, _} | tail], doc, url, items), do: parse(tail, doc, url, items)
   def parse([head | tail], doc, url, items), do: parse(tail, doc, url, parse(head, doc, url, items))
   def parse([], _, _, items), do: items
-  def parse({:comment, _}, _, _, items), do: items
 
   def parse(root, doc, url, items) do
     root_classes = Microformats2.attr_list(root) |>
@@ -18,62 +16,30 @@ defmodule Microformats2.Items do
                         %{type: root_classes,
                           properties: %{}}) |> Microformats2.Items.ImpliedProperties.parse(root, url, doc)
 
-      children_entries = parse(children, doc, url, [])
-
-      if not Microformats2.blank?(children_entries) do
-        items ++ [Map.put(entry, :children, children_entries)]
-      else
-        items ++ [entry]
-      end
-
+      items ++ [entry]
     else
       parse(children, doc, url, items)
     end
   end
 
   defp parse_sub([], _, _, item), do: item
-  defp parse_sub([{:comment, _} | children], doc, url, item), do: parse_sub(children, doc, url, item)
   defp parse_sub([child | children], doc, url, item) when is_bitstring(child), do: parse_sub(children, doc, url, item)
   defp parse_sub([child = {_, _, child_children} | children], doc, url, item) do
-    props = Microformats2.attr_list(child) |>
+    p = if Microformats2.has_a?(child, "h-") do
+      parse(child, doc, url, []) |> List.first
+    else
+      []
+    end
+
+    classes = Microformats2.attr_list(child) |>
       Enum.filter(fn("p-" <> _) -> true
         ("u-" <> _) -> true
         ("dt-" <> _) -> true
         ("e-" <> _) -> true
-        (_) -> false end) |>
-      Enum.reduce(item[:properties], fn(class, acc) ->
-        prop = if Microformats2.is_rootlevel?(child) do
-            p = parse(child, doc, url, []) |> List.first
+        (_) -> false end)
 
-            val = cond do
-              Microformats2.is_a?(class, "p") and p[:properties][:name] != nil ->
-                List.first(p[:properties][:name])
-              Microformats2.is_a?(class, "u") and p[:properties][:url] != nil ->
-                List.first(p[:properties][:url])
-              Microformats2.is_a?(class, "e") -> #and p[:properties][:url] != nil ->
-                # TODO handle
-                nil
-              true ->
-                # TODO handle
-                nil
-            end
-
-            Map.put(p, :value, val)
-          else
-            parse_prop(class, child, doc, url)
-          end
-
-        key = strip_prefix(class) |> to_key |> String.to_atom
-        val = if acc[key] != nil, do: acc[key], else: []
-        Map.put(acc, key, val ++ [prop])
-      end)
-
-    propped_item = Map.put(item, :properties, props)
-    n_item = if Microformats2.is_rootlevel?(child) do
-      propped_item
-    else
-      parse_sub(child_children, doc, url, propped_item)
-    end
+    props = gen_prop(child, classes, item, p, doc, url)
+    n_item = if Microformats2.is_rootlevel?(child), do: props, else: parse_sub(child_children, doc, url, props)
 
     parse_sub(children, doc, url, n_item)
   end
@@ -147,7 +113,40 @@ defmodule Microformats2.Items do
   defp parse_prop(_, _, _, _), do: nil
 
 
+  defp get_value(class, p) do
+    val = cond do
+      Microformats2.is_a?(class, "p") and p[:properties][:name] != nil ->
+        List.first(p[:properties][:name])
+      Microformats2.is_a?(class, "u") and p[:properties][:url] != nil ->
+        List.first(p[:properties][:url])
+      Microformats2.is_a?(class, "e") -> #and p[:properties][:url] != nil ->
+        # TODO handle
+        nil
+      true ->
+        # TODO handle
+        nil
+    end
+  end
 
+  defp gen_prop(child, classes, item, p, doc, url) do
+    props = Enum.reduce(classes, item[:properties], fn(class, acc) ->
+      prop = if Microformats2.is_rootlevel?(child) do
+          Map.put(p, :value, get_value(class, p))
+        else
+          parse_prop(class, child, doc, url)
+        end
+
+      key = strip_prefix(class) |> to_key |> String.to_atom
+      val = if acc[key] != nil, do: acc[key], else: []
+               Map.put(acc, key, val ++ [prop])
+    end)
+
+    if Microformats2.blank?(classes) and not Microformats2.blank?(p) and Microformats2.is_rootlevel?(child) do
+      Map.put(item, :children, (item[:children] || []) ++ [p])
+    else
+      Map.put(item, :properties, props)
+    end
+  end
 
 
   defp strip_prefix("p-" <> rest) do

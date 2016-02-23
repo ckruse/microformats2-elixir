@@ -14,7 +14,8 @@ defmodule Microformats2 do
     doc = Floki.parse(content) |>
       Floki.filter_out("template") |>
       Floki.filter_out("style") |>
-      Floki.filter_out("script")
+      Floki.filter_out("script") |>
+      Floki.filter_out(:comment)
 
     rels = Microformats2.Rels.parse(doc, url)
     items = Microformats2.Items.parse(doc, doc, url)
@@ -49,6 +50,10 @@ defmodule Microformats2 do
   def is_a?("u-" <> _, wanted), do: wanted == "u"
   def is_a?("dt-" <> _, wanted), do: wanted == "dt"
   def is_a?(_, _), do: false
+
+  def has_a?(node, wanted) do
+    attr_list(node) |> Enum.filter(fn(class) -> is_a?(class, wanted) end) |> blank?
+  end
 
   def abs_uri(url, base_url, doc) do
     parsed = URI.parse(url)
