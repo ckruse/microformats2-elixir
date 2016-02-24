@@ -1,4 +1,4 @@
-%{"floki": {:git, "https://github.com/philss/floki.git", "eb63415ca70bafcfe6e2c602029d7dc41bcf308b", []},
+%{"floki": {:hex, :floki, "0.7.2"},
   "httpotion": {:hex, :httpotion, "2.2.0"},
   "ibrowse": {:hex, :ibrowse, "4.2.2"},
   "mochiweb": {:hex, :mochiweb, "2.12.2"}}
