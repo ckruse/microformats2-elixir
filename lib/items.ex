@@ -114,7 +114,7 @@ defmodule Microformats2.Items do
 
 
   defp get_value(class, p) do
-    val = cond do
+    cond do
       Microformats2.is_a?(class, "p") and p[:properties][:name] != nil ->
         List.first(p[:properties][:name])
       Microformats2.is_a?(class, "u") and p[:properties][:url] != nil ->
