@@ -106,8 +106,8 @@ defmodule Microformats2.Items do
   end
 
   defp parse_prop("e-" <> _, child = {_, _, children}, _, _) do
-    %{html: Floki.raw_html(children),
-      text: Floki.text(child)}
+    %{html: Microformats2.stripped_or_nil(Floki.raw_html(children)),
+      text: Microformats2.stripped_or_nil(Floki.text(child))}
   end
 
   defp parse_prop(_, _, _, _), do: nil
