@@ -1,7 +1,7 @@
 
 defmodule Microformats2 do
   def parse(url) do
-    response = HTTPotion.get url
+    response = HTTPotion.get url, [ follow_redirects: true ]
 
     if HTTPotion.Response.success?(response) do
       parse(response.body, url)
