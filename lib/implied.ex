@@ -126,10 +126,10 @@ defmodule Microformats2.Items.ImpliedProperties do
           fn(el) when is_bitstring(el) -> false
             (_) -> true end)
 
-        if Enum.count(children) == 1 do
+        if Enum.count(only_nodes) == 1 do
           child = List.first(children)
-          sec_imgs = direct_not_h_children_with_attr(root, "img", "src")
-          sec_objs = direct_not_h_children_with_attr(root, "object", "data")
+          sec_imgs = direct_not_h_children_with_attr(child, "img", "src")
+          sec_objs = direct_not_h_children_with_attr(child, "object", "data")
 
           cond do
             Enum.count(sec_imgs) == 1 ->
