@@ -268,7 +268,7 @@ defmodule Microformats2ItemsTest do
                        value: "Christian Kruse,\n\t\t        4 days ago\n\t\t        Of course he is!"
                      }
                    ],
-                   content: [%{html: "<p>He's right, you know?</p>", text: "He's right, you know?"}],
+                   content: [%{html: "<p>He&apos;s right, you know?</p>", text: "He's right, you know?"}],
                    in_reply_to: ["https://wwwtech.de/pictures/51"],
                    name: ["Note #587"],
                    published: ["2016-02-18T19:33:25Z"],
