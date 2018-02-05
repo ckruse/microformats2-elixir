@@ -33,7 +33,7 @@ defmodule Microformats2 do
   def blank?(_), do: false
 
   def stripped_or_nil(nil), do: nil
-  def stripped_or_nil(val), do: String.strip(val)
+  def stripped_or_nil(val), do: String.trim(val)
 
   def is_rootlevel?(node) when is_tuple(node) do
     attr_list(node, "class") |>

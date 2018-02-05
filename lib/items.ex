@@ -56,7 +56,7 @@ defmodule Microformats2.Items do
       elem == "img" and not Microformats2.blank?(alt) ->
         alt
       true ->
-        text_content(child) |> String.strip
+        text_content(child) |> String.trim
     end
   end
 
@@ -84,7 +84,7 @@ defmodule Microformats2.Items do
       Enum.member?(["data", "input"], elem) and not Microformats2.blank?(value) ->
         value
       true ->
-        text_content(child) |> String.strip
+        text_content(child) |> String.trim
     end |> Microformats2.abs_uri(url, doc)
   end
 
@@ -101,7 +101,7 @@ defmodule Microformats2.Items do
       Enum.member?(["data", "input"], elem) and not Microformats2.blank?(value) ->
         value |> List.first
       true ->
-        text_content(child) |> String.strip
+        text_content(child) |> String.trim
     end
   end
 

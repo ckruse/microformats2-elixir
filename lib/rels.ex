@@ -5,7 +5,7 @@ defmodule Microformats2.Rels do
         rel = Floki.attribute(element, "rel") |> List.first
         href = Floki.attribute(element, "href") |> List.first
 
-        String.strip(to_string(rel)) != "" and String.strip(to_string(href)) != ""
+        String.trim(to_string(rel)) != "" and String.trim(to_string(href)) != ""
       end) |>
       Enum.reduce(%{rels: %{}, rel_urls: %{}}, fn(element, acc) ->
         rel = Microformats2.attr_list(element, "rel")
@@ -47,7 +47,7 @@ defmodule Microformats2.Rels do
   defp save_text(map, element, url) do
     text = Floki.text(element)
 
-    if String.strip(to_string(text)) == "" or map[:rel_urls][url][:text] != nil do
+    if String.trim(to_string(text)) == "" or map[:rel_urls][url][:text] != nil do
       map
     else
       Map.put(map, :rel_urls,
@@ -62,7 +62,7 @@ defmodule Microformats2.Rels do
       fn(att, nmap) ->
         val = Floki.attribute(element, att) |> List.first
 
-        if String.strip(to_string(val)) == "" or nmap[:rel_urls][url][String.to_atom(att)] != nil do
+        if String.trim(to_string(val)) == "" or nmap[:rel_urls][url][String.to_atom(att)] != nil do
           nmap
         else
           Map.put(nmap, :rel_urls,
