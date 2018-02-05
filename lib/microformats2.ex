@@ -1,7 +1,6 @@
-
 defmodule Microformats2 do
   def parse(url) do
-    response = HTTPotion.get url, [ follow_redirects: true ]
+    response = HTTPotion.get(url, follow_redirects: true)
 
     if HTTPotion.Response.success?(response) do
       parse(response.body, url)
@@ -11,11 +10,12 @@ defmodule Microformats2 do
   end
 
   def parse(content, url) do
-    doc = Floki.parse(content) |>
-      Floki.filter_out("template") |>
-      Floki.filter_out("style") |>
-      Floki.filter_out("script") |>
-      Floki.filter_out(:comment)
+    doc =
+      Floki.parse(content)
+      |> Floki.filter_out("template")
+      |> Floki.filter_out("style")
+      |> Floki.filter_out("script")
+      |> Floki.filter_out(:comment)
 
     rels = Microformats2.Rels.parse(doc, url)
     items = Microformats2.Items.parse(doc, doc, url)
@@ -24,7 +24,7 @@ defmodule Microformats2 do
   end
 
   def attr_list(node, attr \\ "class") do
-    Floki.attribute(node, attr) |> List.first |> to_string |> String.split(" ", trim: true)
+    Floki.attribute(node, attr) |> List.first() |> to_string |> String.split(" ", trim: true)
   end
 
   def blank?(nil), do: true
@@ -36,13 +36,13 @@ defmodule Microformats2 do
   def stripped_or_nil(val), do: String.trim(val)
 
   def is_rootlevel?(node) when is_tuple(node) do
-    attr_list(node, "class") |>
-      Enum.any?(fn(cls) -> is_a?(cls, "h") end)
+    attr_list(node, "class")
+    |> Enum.any?(fn cls -> is_a?(cls, "h") end)
   end
+
   def is_rootlevel?(class_name) when is_bitstring(class_name) do
     is_a?(class_name, "h")
   end
-
 
   def is_a?("h-" <> _, wanted), do: wanted == "h"
   def is_a?("p-" <> _, wanted), do: wanted == "p"
@@ -52,7 +52,7 @@ defmodule Microformats2 do
   def is_a?(_, _), do: false
 
   def has_a?(node, wanted) do
-    attr_list(node) |> Enum.filter(fn(class) -> is_a?(class, wanted) end) |> blank?
+    attr_list(node) |> Enum.filter(fn class -> is_a?(class, wanted) end) |> blank?
   end
 
   def abs_uri(url, base_url, doc) do
@@ -60,19 +60,23 @@ defmodule Microformats2 do
     parsed_base = URI.parse(base_url)
 
     cond do
-      not Microformats2.blank?(parsed.scheme) -> # absolute URI
+      # absolute URI
+      not Microformats2.blank?(parsed.scheme) ->
         url
-      Microformats2.blank?(parsed.scheme) and not Microformats2.blank?(parsed.host) -> # protocol relative URI
+
+      # protocol relative URI
+      Microformats2.blank?(parsed.scheme) and not Microformats2.blank?(parsed.host) ->
         URI.to_string(%{parsed | scheme: parsed_base.scheme})
+
       true ->
         base_element = Floki.find(doc, "base")
 
-        new_base = if base_element == nil or Microformats2.blank?(Floki.attribute(base_element, "href")) do
-          base_url
-        else
-          abs_uri(Floki.attribute(base_element, "href") |> List.first,
-                  base_url, [])
-        end
+        new_base =
+          if base_element == nil or Microformats2.blank?(Floki.attribute(base_element, "href")) do
+            base_url
+          else
+            abs_uri(Floki.attribute(base_element, "href") |> List.first(), base_url, [])
+          end
 
         parsed_new_base = URI.parse(new_base)
         new_path = Path.expand(parsed.path || "/", Path.dirname(parsed_new_base.path || "/"))

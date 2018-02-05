@@ -2,14 +2,16 @@ defmodule Microformats2.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :microformats2,
-     version: "0.0.8",
-     elixir: "~> 1.3",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     description: description(),
-     package: package(),
-     deps: deps()]
+    [
+      app: :microformats2,
+      version: "0.0.8",
+      elixir: "~> 1.3",
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      description: description(),
+      package: package(),
+      deps: deps()
+    ]
   end
 
   # Configuration for the OTP application
@@ -26,10 +28,12 @@ defmodule Microformats2.Mixfile do
   end
 
   def package do
-    [files: ["lib", "mix.exs", "README.md", "LICENSE"],
-     maintainers: ["Christian Kruse"],
-     licenses: ["AGPL 3.0"],
-     links: %{"GitHub" => "https://github.com/ckruse/microformats2-elixir"}]
+    [
+      files: ["lib", "mix.exs", "README.md", "LICENSE"],
+      maintainers: ["Christian Kruse"],
+      licenses: ["AGPL 3.0"],
+      links: %{"GitHub" => "https://github.com/ckruse/microformats2-elixir"}
+    ]
   end
 
   # Dependencies can be Hex packages:
@@ -42,8 +46,6 @@ defmodule Microformats2.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:floki, "~> 0.7"},
-     {:httpotion, "~> 3.0"},
-     {:ex_doc, ">= 0.0.0", only: :dev}]
+    [{:floki, "~> 0.7"}, {:httpotion, "~> 3.0"}, {:ex_doc, ">= 0.0.0", only: :dev}]
   end
 end
