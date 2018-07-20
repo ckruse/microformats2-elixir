@@ -4,8 +4,8 @@ defmodule Microformats2.Mixfile do
   def project do
     [
       app: :microformats2,
-      version: "0.1.0",
-      elixir: "~> 1.3",
+      version: "0.2.0",
+      elixir: "~> 1.6",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       description: description(),
@@ -46,6 +46,10 @@ defmodule Microformats2.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:floki, "~> 0.7"}, {:httpotion, "~> 3.0"}, {:ex_doc, ">= 0.0.0", only: :dev}]
+    [
+      {:floki, "~> 0.7"},
+      {:httpotion, "~> 3.0"},
+      {:ex_doc, ">= 0.0.0", only: :dev}
+    ]
   end
 end

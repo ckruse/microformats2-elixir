@@ -1,9 +1,9 @@
 %{
-  "earmark": {:hex, :earmark, "1.2.4", "99b637c62a4d65a20a9fb674b8cffb8baa771c04605a80c911c4418c69b75439", [:mix], []},
-  "ex_doc": {:hex, :ex_doc, "0.18.2", "993e0a95e9fbb790ac54ea58e700b45b299bd48bc44b4ae0404f28161f37a83e", [:mix], [{:earmark, "~> 1.1", [hex: :earmark, optional: false]}]},
-  "floki": {:hex, :floki, "0.19.3", "652d1447767f783bd6cae1d882fd2145f25db28c6841ab87659225b468cff101", [:mix], [{:html_entities, "~> 0.4.0", [hex: :html_entities, optional: false]}, {:mochiweb, "~> 2.15", [hex: :mochiweb, optional: false]}]},
-  "html_entities": {:hex, :html_entities, "0.4.0", "f2fee876858cf6aaa9db608820a3209e45a087c5177332799592142b50e89a6b", [:mix], []},
-  "httpotion": {:hex, :httpotion, "3.0.3", "17096ea1a7c0b2df74509e9c15a82b670d66fc4d66e6ef584189f63a9759428d", [:mix], [{:ibrowse, "~> 4.4", [hex: :ibrowse, optional: false]}]},
-  "ibrowse": {:hex, :ibrowse, "4.4.0", "2d923325efe0d2cb09b9c6a047b2835a5eda69d8a47ed6ff8bc03628b764e991", [:rebar3], []},
-  "mochiweb": {:hex, :mochiweb, "2.15.0", "e1daac474df07651e5d17cc1e642c4069c7850dc4508d3db7263a0651330aacc", [:rebar3], []},
+  "earmark": {:hex, :earmark, "1.2.5", "4d21980d5d2862a2e13ec3c49ad9ad783ffc7ca5769cf6ff891a4553fbaae761", [:mix], [], "hexpm"},
+  "ex_doc": {:hex, :ex_doc, "0.18.4", "4406b8891cecf1352f49975c6d554e62e4341ceb41b9338949077b0d4a97b949", [:mix], [{:earmark, "~> 1.1", [hex: :earmark, repo: "hexpm", optional: false]}], "hexpm"},
+  "floki": {:hex, :floki, "0.20.3", "dfb3a71eb99938e330b4156433d55c6d0b188d936c9683d115a8540bac56e019", [:mix], [{:html_entities, "~> 0.4.0", [hex: :html_entities, repo: "hexpm", optional: false]}, {:mochiweb, "~> 2.15", [hex: :mochiweb, repo: "hexpm", optional: false]}], "hexpm"},
+  "html_entities": {:hex, :html_entities, "0.4.0", "f2fee876858cf6aaa9db608820a3209e45a087c5177332799592142b50e89a6b", [:mix], [], "hexpm"},
+  "httpotion": {:hex, :httpotion, "3.1.0", "14d20d9b0ce4e86e253eb91e4af79e469ad949f57a5d23c0a51b2f86559f6589", [:mix], [{:ibrowse, "~> 4.4", [hex: :ibrowse, repo: "hexpm", optional: false]}], "hexpm"},
+  "ibrowse": {:hex, :ibrowse, "4.4.0", "2d923325efe0d2cb09b9c6a047b2835a5eda69d8a47ed6ff8bc03628b764e991", [:rebar3], [], "hexpm"},
+  "mochiweb": {:hex, :mochiweb, "2.15.0", "e1daac474df07651e5d17cc1e642c4069c7850dc4508d3db7263a0651330aacc", [:rebar3], [], "hexpm"},
 }
