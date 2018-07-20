@@ -8,9 +8,9 @@ This parser is [available in Hex](https://hex.pm/packages/microformats2):
 
   1. Add microformats2 to your list of dependencies in `mix.exs`:
 
-        def deps do
-          [{:microformats2, "~> 0.0.5"}]
-        end
+         def deps do
+           [{:microformats2, "~> 0.0.5"}]
+         end
 
 
 
