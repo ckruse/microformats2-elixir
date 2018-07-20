@@ -31,7 +31,7 @@ defmodule Microformats2.Mixfile do
     [
       files: ["lib", "mix.exs", "README.md", "LICENSE"],
       maintainers: ["Christian Kruse"],
-      licenses: ["AGPL 3.0"],
+      licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/ckruse/microformats2-elixir"}
     ]
   end
