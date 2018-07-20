@@ -78,4 +78,4 @@ Not implemented:
 
 ## License
 
-This software is licensed under the [AGPL3](http://choosealicense.com/licenses/agpl-3.0/).
+This software is licensed under the [MIT license](https://choosealicense.com/licenses/mit/).
