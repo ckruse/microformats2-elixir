@@ -280,4 +280,363 @@ defmodule Microformats2ItemsTest do
              ]
            } = Microformats2.parse(str, "http://localhost")
   end
+
+  test "Aaron Parecki: https://aaronparecki.com/2018/12/17/7/blocking-domains" do
+    {:ok, str} = File.read("./test/documents/blocking-domains.html")
+
+    assert %{
+             items: [
+               %{
+                 properties: %{
+                   author: ["http://localhost/"],
+                   category: ["webmention", "p3k", "block", "spam"],
+                   comment: [
+                     %{
+                       children: [
+                         %{
+                           properties: %{
+                             name: ["@freakazoid"],
+                             url: ["https://retro.social/@freakazoid"]
+                           },
+                           type: ["h-card"]
+                         },
+                         %{
+                           properties: %{
+                             name: ["@aaronpk"],
+                             url: ["https://aaronparecki.com/aaronpk"]
+                           },
+                           type: ["h-card"]
+                         }
+                       ],
+                       properties: %{
+                         author: [
+                           %{
+                             properties: %{
+                               name: ["Jacky Alciné"],
+                               photo: [
+                                 "https://pkcdn.xyz/playvicious.social/9b9144f41aa329413223cc8779b82ed39e7256a5f28e1fdb1ea4e5e6c901cd47.png"
+                               ],
+                               url: ["https://playvicious.social/@jalcine"]
+                             },
+                             type: ["h-card"],
+                             value: "Jacky Alciné"
+                           }
+                         ],
+                         content: [
+                           %{
+                             html:
+                               "<p><span class=\"h-card\"><a href=\"https://retro.social/@freakazoid\" class=\"u-url\" rel=\"nofollow\">@<span>freakazoid</span></a></span> This is a case for handling an attack vector (in the realm of spam) from <span class=\"h-card\"><a href=\"https://aaronparecki.com/aaronpk\" class=\"u-url\" rel=\"nofollow\">@<span>aaronpk</span></a></span> on the topic <a href=\"https://aaronparecki.com/2018/12/17/7/blocking-domains\" rel=\"nofollow\"><span>https://</span><span>aaronparecki.com/2018/12/17/7/</span><span>blocking-domains</span></a></p>",
+                             text:
+                               "@freakazoid This is a case for handling an attack vector (in the realm of spam) from @aaronpk on the topic https://aaronparecki.com/2018/12/17/7/blocking-domains"
+                           }
+                         ],
+                         name: [
+                           "@freakazoid This is a case for handling an attack vector (in the realm of spam) from @aaronpk on the topic https://aaronparecki.com/2018/12/17/7/blocking-domains"
+                         ],
+                         published: ["2018-12-17T21:56:53+00:00"],
+                         url: ["https://playvicious.social/@jalcine/101258612771728535"]
+                       },
+                       type: ["h-cite"],
+                       value:
+                         "@freakazoid This is a case for handling an attack vector (in the realm of spam) from @aaronpk on the topic https://aaronparecki.com/2018/12/17/7/blocking-domains"
+                     },
+                     %{
+                       properties: %{
+                         author: [
+                           %{
+                             properties: %{
+                               name: ["fireburn.ru"],
+                               photo: ["/assets/images/no-profile-photo.png"],
+                               url: ["https://fireburn.ru"]
+                             },
+                             type: ["h-card"],
+                             value: "fireburn.ru"
+                           }
+                         ],
+                         content: [
+                           %{
+                             html:
+                               "<p>Finally there is a blocklist interface! Now I can send webmentions from myself and not block my domain.</p><p>Do you plan on building a premoderation queue tied to Vouch support?</p>",
+                             text:
+                               "Finally there is a blocklist interface! Now I can send webmentions from myself and not block my domain.Do you plan on building a premoderation queue tied to Vouch support?"
+                           }
+                         ],
+                         name: [
+                           "Finally there is a blocklist interface! Now I can send webmentions from myself and not block my domain.Do you plan on building a premoderation queue tied to Vouch support?"
+                         ],
+                         published: ["2018-12-18T09:45:49+03:00"],
+                         url: ["https://fireburn.ru/reply/1545115549"]
+                       },
+                       type: ["h-cite"],
+                       value:
+                         "Finally there is a blocklist interface! Now I can send webmentions from myself and not block my domain.Do you plan on building a premoderation queue tied to Vouch support?"
+                     },
+                     %{
+                       properties: %{
+                         author: [
+                           %{
+                             properties: %{
+                               name: ["chrisburnell.com"],
+                               photo: ["/assets/images/no-profile-photo.png"],
+                               url: ["https://chrisburnell.com"]
+                             },
+                             type: ["h-card"],
+                             value: "chrisburnell.com"
+                           }
+                         ],
+                         name: ["Chris Burnell"],
+                         photo: [
+                           "https://pkcdn.xyz/chrisburnell.com/9ac30b63aeddbcb10a6b8b9e231022d86fe3d30e6e279c1bc0c341e103b64119.png"
+                         ],
+                         published: ["2018-12-18T08:58:31-08:00"],
+                         url: ["https://chrisburnell.com/"]
+                       },
+                       type: ["h-cite"],
+                       value: "Chris Burnell"
+                     }
+                   ],
+                   content: [
+                     %{
+                       html:
+                         "<p>For the past week or so, I&apos;ve been getting a series of Pingbacks from a spam blog that reposts a blog post a couple times a day as a new post each time. It&apos;s up to about 220 copies of the post, each one having sent me a Pingback, and each one showing up in my <a href=\"https://aaronparecki.com/2018/04/20/46/indieweb-reader-my-new-home-on-the-internet\">reader</a> as a notification, which also causes it to be sent to my phone.</p><img src=\"https://aaronparecki.com/2018/12/17/7/image-1.jpg\" alt=\"\"/><p>Since I use <a href=\"https://webmention.io\">webmention.io</a> to handle my incoming Webmentions (and Pingbacks), this would be the best place to block the site, rather than filtering it out in my reader or my website. </p><p>Webmention.io previously had no way to actually completely block a domain. As Webmentions have started growing in popularity, it&apos;s become obvious that we need more tools to combat spam and abuse. While this site was actually sending me Pingbacks, the same applies to Webmentions.</p><p>Today I added a new feature to <a href=\"https://webmention.io\">webmention.io</a> to allow people to entirely block a domain, and delete any webmentions received from that domain. </p><img src=\"https://aaronparecki.com/2018/12/17/7/image-2.png\" alt=\"\"/><p>From the dashboard, you can click the &quot;X&quot; on any recent webmention, or you can paste a URL from one you&apos;ve received in the past. You&apos;ll be taken to this screen where you can either delete just the one webmention, or entirely block the domain.</p><p>Once you&apos;ve blocked the domain, it will show up in your blocklists page!</p><img src=\"https://aaronparecki.com/2018/12/17/7/image-3.png\" alt=\"\"/><p>I hope this helps others keep out spam as well! I&apos;m sure looking forward to never seeing that notification on my phone again!</p><div id=\"codefund_ad\"></div>",
+                       text:
+                         "For the past week or so, I've been getting a series of Pingbacks from a spam blog that reposts a blog post a couple times a day as a new post each time. It's up to about 220 copies of the post, each one having sent me a Pingback, and each one showing up in my reader as a notification, which also causes it to be sent to my phone.Since I use webmention.io to handle my incoming Webmentions (and Pingbacks), this would be the best place to block the site, rather than filtering it out in my reader or my website. Webmention.io previously had no way to actually completely block a domain. As Webmentions have started growing in popularity, it's become obvious that we need more tools to combat spam and abuse. While this site was actually sending me Pingbacks, the same applies to Webmentions.Today I added a new feature to webmention.io to allow people to entirely block a domain, and delete any webmentions received from that domain. From the dashboard, you can click the \"X\" on any recent webmention, or you can paste a URL from one you've received in the past. You'll be taken to this screen where you can either delete just the one webmention, or entirely block the domain.Once you've blocked the domain, it will show up in your blocklists page!I hope this helps others keep out spam as well! I'm sure looking forward to never seeing that notification on my phone again!"
+                     }
+                   ],
+                   like: [
+                     %{
+                       properties: %{
+                         author: [
+                           %{
+                             properties: %{
+                               name: ["Eddie Hinkle"],
+                               photo: [
+                                 "https://pkcdn.xyz/eddiehinkle.com/cf9f85e26d4be531bc908d37f69bff1c50b50b87fd066b254f1332c3553df1a8.jpg"
+                               ],
+                               url: ["https://eddiehinkle.com/"]
+                             },
+                             type: ["h-card"],
+                             value: "Eddie Hinkle"
+                           }
+                         ],
+                         name: [
+                           "https://pkcdn.xyz/eddiehinkle.com/cf9f85e26d4be531bc908d37f69bff1c50b50b87fd066b254f1332c3553df1a8.jpgEddie Hinkle"
+                         ],
+                         url: ["https://eddiehinkle.com/2018/12/18/1/like/"]
+                       },
+                       type: ["h-cite"],
+                       value:
+                         "https://pkcdn.xyz/eddiehinkle.com/cf9f85e26d4be531bc908d37f69bff1c50b50b87fd066b254f1332c3553df1a8.jpgEddie Hinkle"
+                     },
+                     %{
+                       properties: %{
+                         author: [
+                           %{
+                             properties: %{
+                               name: ["Vika"],
+                               photo: [
+                                 "https://pkcdn.xyz/fireburn.ru/2c643998489fa0cea4689c0a154470f6e133f3ea0547fcce463eaf99312f3e42.png"
+                               ],
+                               url: ["https://fireburn.ru/"]
+                             },
+                             type: ["h-card"],
+                             value: "Vika"
+                           }
+                         ],
+                         name: [
+                           "https://pkcdn.xyz/fireburn.ru/2c643998489fa0cea4689c0a154470f6e133f3ea0547fcce463eaf99312f3e42.pngVika"
+                         ],
+                         url: ["https://fireburn.ru/like/1545115461"]
+                       },
+                       type: ["h-cite"],
+                       value:
+                         "https://pkcdn.xyz/fireburn.ru/2c643998489fa0cea4689c0a154470f6e133f3ea0547fcce463eaf99312f3e42.pngVika"
+                     }
+                   ],
+                   location: [
+                     %{
+                       properties: %{
+                         latitude: [""],
+                         locality: ["Portland"],
+                         longitude: [""],
+                         name: ["Portland,\n        Oregon•\n                    52°F"],
+                         region: ["Oregon"]
+                       },
+                       type: ["h-adr"],
+                       value: "Portland,\n        Oregon•\n                    52°F"
+                     }
+                   ],
+                   name: ["Blocking Domains in webmention.io"],
+                   pk_num_likes: ["2"],
+                   pk_num_mentions: ["1"],
+                   pk_num_replies: ["2"],
+                   published: ["2018-12-17T13:24:28-08:00"],
+                   url: ["https://aaronparecki.com/2018/12/17/7/blocking-domains"]
+                 },
+                 type: ["h-entry"]
+               },
+               %{
+                 properties: %{
+                   bday: ["--12-28"],
+                   callsign: ["W7APK"],
+                   name: ["Aaron Parecki"],
+                   note: [
+                     "Hi, I'm Aaron Parecki,  co-founder of\nIndieWebCamp.\nI maintain oauth.net, write and consult about OAuth, and\nam the editor of several W3C specfications. I record videos for local conferences and help run a podcast studio in Portland.I wrote 100 songs in 100 days! I've been tracking my location since 2008,\nand write down everything I eat and drink.\nI've spoken at conferences around the world about\nowning your data,\nOAuth,\nquantified self,\nand explained why R is a vowel. Read more."
+                   ],
+                   org: [
+                     %{
+                       properties: %{
+                         name: ["IndieWebCamp"],
+                         url: ["https://indieweb.org/"]
+                       },
+                       type: ["h-card"],
+                       value: "IndieWebCamp"
+                     },
+                     %{
+                       properties: %{name: ["oauth.net"], url: ["https://oauth.net/"]},
+                       type: ["h-card"],
+                       value: "oauth.net"
+                     },
+                     %{
+                       properties: %{
+                         name: ["Okta"],
+                         photo: ["http://localhost/images/okta.png"],
+                         role: ["Developer Advocate"],
+                         url: ["https://developer.okta.com/"]
+                       },
+                       type: ["h-card"],
+                       value: "Okta"
+                     },
+                     %{
+                       properties: %{
+                         name: ["IndieWebCamp"],
+                         photo: ["http://localhost/images/indiewebcamp.png"],
+                         role: ["Founder"],
+                         url: ["https://indieweb.org/"]
+                       },
+                       type: ["h-card"],
+                       value: "IndieWebCamp"
+                     },
+                     %{
+                       properties: %{
+                         name: ["W3C"],
+                         photo: ["http://localhost/images/w3c.png"],
+                         role: ["Editor"],
+                         url: ["https://www.w3.org/"]
+                       },
+                       type: ["h-card"],
+                       value: "W3C"
+                     },
+                     %{
+                       properties: %{
+                         name: ["Stream PDX"],
+                         photo: ["http://localhost/images/streampdx.png"],
+                         role: ["Co-Founder"],
+                         url: ["https://streampdx.com"]
+                       },
+                       type: ["h-card"],
+                       value: "Stream PDX"
+                     },
+                     %{
+                       properties: %{
+                         name: ["backpedal.tv"],
+                         photo: ["http://localhost/images/backpedal.png"],
+                         url: ["https://backpedal.tv"]
+                       },
+                       type: ["h-card"],
+                       value: "backpedal.tv"
+                     }
+                   ],
+                   photo: ["http://localhost/images/profile.jpg"],
+                   uid: ["http://localhost/"],
+                   url: ["http://localhost/", "https://w7apk.com"]
+                 },
+                 type: ["h-card"]
+               }
+             ],
+             rel_urls: %{
+               "http://creativecommons.org/licenses/by/3.0/" => %{
+                 rels: ["license"],
+                 text: "Creative Commons Attribution 3.0 License"
+               },
+               "http://localhost/assets/admin.css" => %{rels: ["stylesheet"]},
+               "http://localhost/assets/carbon.css" => %{rels: ["stylesheet"]},
+               "http://localhost/assets/featherlight-1.5.0/featherlight.min.css" => %{
+                 rels: ["stylesheet"]
+               },
+               "http://localhost/assets/icomoon/style.css" => %{rels: ["stylesheet"]},
+               "http://localhost/assets/pulse.css" => %{rels: ["stylesheet"]},
+               "http://localhost/assets/story.css" => %{rels: ["stylesheet"]},
+               "http://localhost/assets/styles.4.css" => %{rels: ["stylesheet"]},
+               "http://localhost/assets/weather-icons/css/weather-icons.css" => %{
+                 rels: ["stylesheet"]
+               },
+               "http://localhost/key.txt" => %{rels: ["pgpkey"]},
+               "http://localhost/semantic/2.2.6/semantic.min.css" => %{
+                 rels: ["stylesheet"],
+                 type: "text/css"
+               },
+               "http://localhost/site/styles.1.css" => %{rels: ["stylesheet"]},
+               "https://aaronparecki.com/" => %{rels: ["openid.delegate"]},
+               "https://aaronparecki.com/2018/12/17/7/blocking-domains" => %{
+                 rels: ["nofollow"],
+                 text: "https://aaronparecki.com/2018/12/17/7/blocking-domains"
+               },
+               "https://aaronparecki.com/2018/12/17/7/blocking-domains.as2" => %{
+                 rels: ["alternate"],
+                 type: "application/activity+json"
+               },
+               "https://aaronparecki.com/2018/12/17/7/blocking-domains.jf2" => %{
+                 rels: ["alternate"],
+                 type: "application/jf2+json"
+               },
+               "https://aaronparecki.com/2018/12/17/7/blocking-domains.json" => %{
+                 rels: ["alternate"],
+                 type: "application/mf2+json"
+               },
+               "https://aaronparecki.com/aaronpk" => %{
+                 rels: ["nofollow"],
+                 text: "@aaronpk"
+               },
+               "https://micro.blog/aaronpk" => %{rels: ["me"]},
+               "https://openid.indieauth.com/openid" => %{rels: ["openid.server"]},
+               "https://retro.social/@freakazoid" => %{
+                 rels: ["nofollow"],
+                 text: "@freakazoid"
+               },
+               "https://webmention.io/aaronpk/webmention" => %{rels: ["webmention"]},
+               "sms:+15035678642" => %{rels: ["me"]}
+             },
+             rels: %{
+               "alternate" => [
+                 "https://aaronparecki.com/2018/12/17/7/blocking-domains.json",
+                 "https://aaronparecki.com/2018/12/17/7/blocking-domains.jf2",
+                 "https://aaronparecki.com/2018/12/17/7/blocking-domains.as2"
+               ],
+               "license" => ["http://creativecommons.org/licenses/by/3.0/"],
+               "me" => ["sms:+15035678642", "https://micro.blog/aaronpk"],
+               "nofollow" => [
+                 "https://retro.social/@freakazoid",
+                 "https://aaronparecki.com/aaronpk",
+                 "https://aaronparecki.com/2018/12/17/7/blocking-domains"
+               ],
+               "openid.delegate" => ["https://aaronparecki.com/"],
+               "openid.server" => ["https://openid.indieauth.com/openid"],
+               "pgpkey" => ["http://localhost/key.txt"],
+               "stylesheet" => [
+                 "http://localhost/semantic/2.2.6/semantic.min.css",
+                 "http://localhost/assets/icomoon/style.css",
+                 "http://localhost/assets/weather-icons/css/weather-icons.css",
+                 "http://localhost/assets/featherlight-1.5.0/featherlight.min.css",
+                 "http://localhost/assets/admin.css",
+                 "http://localhost/assets/pulse.css",
+                 "http://localhost/assets/styles.4.css",
+                 "http://localhost/site/styles.1.css",
+                 "http://localhost/assets/carbon.css",
+                 "http://localhost/assets/story.css"
+               ],
+               "webmention" => ["https://webmention.io/aaronpk/webmention"]
+             }
+           } = Microformats2.parse(str, "http://localhost")
+  end
 end

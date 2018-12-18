@@ -199,7 +199,7 @@ defmodule Microformats2.Items do
       if elem == "img" do
         alt = Floki.attribute(child, "alt")
 
-        if alt != nil and alt != "" do
+        if !Microformats2.blank?(alt) do
           alt
         else
           Floki.attribute(child, "src")

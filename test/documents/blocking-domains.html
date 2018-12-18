@@ -1,0 +1,456 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blocking Domains in webmention.io &bull; Aaron Parecki</title>
+    
+  <link rel="alternate" type="application/mf2+json" href="https://aaronparecki.com/2018/12/17/7/blocking-domains.json" />
+  <link rel="alternate" type="application/jf2+json" href="https://aaronparecki.com/2018/12/17/7/blocking-domains.jf2" />
+  <link rel="alternate" type="application/activity+json" href="https://aaronparecki.com/2018/12/17/7/blocking-domains.as2" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@aaronpk" />
+  <meta name="twitter:creator" content="@aaronpk" />
+
+  <meta property="og:url"                content="https://aaronparecki.com/2018/12/17/7/blocking-domains" />
+  <meta property="og:type"               content="article" />
+  <meta property="og:title"              content="Blocking Domains in webmention.io" />
+  <meta property="og:description"        content="For the past week or so, I&#039;ve been getting a series of Pingbacks from a spam blog that reposts a blog post a couple times a day as a new post each time. It&#039;s up to about 220 copies of the post, each one having sent me a Pingback, and ..." />
+    <meta property="og:image"              content="https://aaronparecki.com/2018/12/17/7/image-1.jpg" />
+    <meta property="og:site_name"          content="Aaron Parecki" />
+
+
+    <link rel="webmention" href="https://webmention.io/aaronpk/webmention">
+
+    <link rel="stylesheet" type="text/css" href="/semantic/2.2.6/semantic.min.css">
+    <script src="/assets/jquery-1.12.0.min.js"></script>
+    <script src="/semantic/2.2.6/semantic.min.js"></script>
+    <link rel="stylesheet" href="/assets/icomoon/style.css">
+    <link rel="stylesheet" href="/assets/weather-icons/css/weather-icons.css">
+    <script src="/assets/featherlight-1.5.0/featherlight.min.js"></script>
+    <link rel="stylesheet" href="/assets/featherlight-1.5.0/featherlight.min.css">
+
+
+    <link rel="stylesheet" href="/assets/admin.css">
+    <link rel="stylesheet" href="/assets/pulse.css">
+    <link rel="stylesheet" href="/assets/styles.4.css">
+    <link rel="stylesheet" href="/site/styles.1.css">
+    <link rel="stylesheet" href="/assets/carbon.css">
+    <script src="/assets/photo-albums/justified-layout.js"></script>
+    <script src="/assets/photo-albums/photo-layout.js"></script>
+    <script src="/assets/js-cookie.js"></script>
+
+    <link rel="stylesheet" href="/assets/story.css">
+    <script src="/assets/story.js"></script>
+
+    <link rel="openid.delegate" href="https://aaronparecki.com/">
+    <link rel="openid.server" href="https://openid.indieauth.com/openid">
+
+
+  </head>
+  <body>
+
+    <div class="sticky-footer-content">
+      <div class="top-bar">
+        <div class="ui container">
+          <form action="/search" method="get" class="search item">
+            <div class="ui icon input">
+              <input type="text" name="q" placeholder="Search..." value="">
+              <i class="search icon"></i>
+            </div>
+          </form>
+                      <span class="item">53&deg;F</span>
+            <span class="weather item">
+              <i class="wi wi-day-cloudy" title="Partly Cloudy in Portland"></i>
+            </span>
+                                <span class="time item"></span>
+                                <span class="battery item"></span>
+                    <div id="logged-in-menu">
+                      </div>
+        </div>
+      </div>
+              <div class="ui container">
+        <div class="site-header">
+  <div class="align-bottom">
+
+    <div class="left">
+      <h1><a href="/">Aaron Parecki</a></h1>
+    </div>
+
+    <div class="right">
+      <ul>
+                  <li><a href="/articles">Articles</a></li>
+                  <li><a href="/notes">Notes</a></li>
+                <li><a href="/projects/">Projects</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+        <div class="post-list">
+  <ul>
+    <li class="h-entry post-entry    post  has-responses" id="post-id-46271">
+      <div style="" class="content-area   has-responses  ">
+              <div class="pad">
+          <h2 class="p-name post-title">Blocking Domains in webmention.io</h2>
+
+              <div class="metaline"><a href="https://aaronparecki.com/2018/12/17/7/blocking-domains">Mon, Dec 17, 2018 1:24pm -08:00</a></div>
+      
+      
+      <div class="post-text e-content  "><p>For the past week or so, I've been getting a series of Pingbacks from a spam blog that reposts a blog post a couple times a day as a new post each time. It's up to about 220 copies of the post, each one having sent me a Pingback, and each one showing up in my <a href="https://aaronparecki.com/2018/04/20/46/indieweb-reader-my-new-home-on-the-internet">reader</a> as a notification, which also causes it to be sent to my phone.</p>
+
+  <img src="https://aaronparecki.com/2018/12/17/7/image-1.jpg" alt="" />
+
+<p>Since I use <a href="https://webmention.io">webmention.io</a> to handle my incoming Webmentions (and Pingbacks), this would be the best place to block the site, rather than filtering it out in my reader or my website. </p>
+<p>Webmention.io previously had no way to actually completely block a domain. As Webmentions have started growing in popularity, it's become obvious that we need more tools to combat spam and abuse. While this site was actually sending me Pingbacks, the same applies to Webmentions.</p>
+<p>Today I added a new feature to <a href="https://webmention.io">webmention.io</a> to allow people to entirely block a domain, and delete any webmentions received from that domain. </p>
+
+  <img src="https://aaronparecki.com/2018/12/17/7/image-2.png" alt="" />
+
+<p>From the dashboard, you can click the "X" on any recent webmention, or you can paste a URL from one you've received in the past. You'll be taken to this screen where you can either delete just the one webmention, or entirely block the domain.</p>
+<p>Once you've blocked the domain, it will show up in your blocklists page!</p>
+
+  <img src="https://aaronparecki.com/2018/12/17/7/image-3.png" alt="" />
+
+<p>I hope this helps others keep out spam as well! I'm sure looking forward to never seeing that notification on my phone again!</p><script src="https://codefund.io/scripts/86b8ca8e-c3f2-41ee-822b-2e8cff3201a3/embed.js?template=bottom-bar" async></script>
+<div id="codefund_ad"></div>
+</div>
+        </div>
+        <div class="metaline pad">
+  <i class="marker icon"></i>
+      <span class="p-location h-adr">
+          <span class="p-locality">Portland</span>,
+        <span class="p-region">Oregon</span>
+          <span class="weather">
+      <span>&bull;</span>
+              <i class="wi wi-cloudy" title="Overcast"></i>
+                    52&deg;F
+          </span>
+              <data class="p-latitude" value="45.535544"></data>
+      <data class="p-longitude" value="-122.621348"></data>
+      </span>
+  </div>
+      
+      <div class="metaline tags pad" style="float: right;">
+      #<a href="/tag/webmention" class="p-category">webmention</a>
+      #<a href="/tag/p3k" class="p-category">p3k</a>
+      #<a href="/tag/block" class="p-category">block</a>
+      #<a href="/tag/spam" class="p-category">spam</a>
+  </div>
+    <div class="metaline pad">
+      <a href="https://aaronparecki.com/2018/12/17/7/blocking-domains" class="u-url">
+      <time class="dt-published" datetime="2018-12-17T13:24:28-08:00">
+        Mon, Dec 17, 2018 1:24pm -08:00
+      </time>
+    </a>
+    </div>
+<a class="u-author" href="/"></a>
+    <div class="metaline responses-summary pad">
+      <span><i class="star empty icon"></i> <span class="p-pk-num-likes">2</span> likes</span>
+            <span><i class="comment outline icon"></i> <span class="p-pk-num-replies">2</span> replies</span>
+        <span><i class="file text outline icon"></i> <span class="p-pk-num-mentions">1</span> mention</span>
+      </div>
+  
+  <div style="clear:both;"></div>
+</div>
+  <div class="responses" id="responses">
+      <ul class="facepile">
+    <li class="group"><i class="star empty icon"></i></li>
+    <!-- TODO: add overlay with twitter/facebook/instagram icon depending on author URL -->
+          <li class="p-like h-cite">
+        <a href="https://eddiehinkle.com/2018/12/18/1/like/" class="u-url">
+          <span class="p-author h-card">
+                          <img class="u-photo" src="https://pkcdn.xyz/eddiehinkle.com/cf9f85e26d4be531bc908d37f69bff1c50b50b87fd066b254f1332c3553df1a8.jpg" height="36">
+                        <a style="display:none;" class="p-name u-url" href="https://eddiehinkle.com/">Eddie Hinkle</a>
+          </span>
+        </a>
+      </li>
+          <li class="p-like h-cite">
+        <a href="https://fireburn.ru/like/1545115461" class="u-url">
+          <span class="p-author h-card">
+                          <img class="u-photo" src="https://pkcdn.xyz/fireburn.ru/2c643998489fa0cea4689c0a154470f6e133f3ea0547fcce463eaf99312f3e42.png" height="36">
+                        <a style="display:none;" class="p-name u-url" href="https://fireburn.ru/">Vika</a>
+          </span>
+        </a>
+      </li>
+      </ul>
+  <div style="clear:both;"></div>
+  
+  
+  
+    <form class="webmention-form ui form" action="https://webmention.io/aaronpk/webmention" method="post">
+    <div class="fields">
+      <div class="twelve wide field">
+        <label>Have you written a <a href="https://indieweb.org/responses">response</a> to this? Let me know the URL:</label>
+        <input type="url" name="source" class="url">
+      </div>
+      <div class="four wide field">
+        <label>&nbsp;</label>
+        <input type="submit" class="ui submit button" value="Send Webmention">
+      </div>
+    </div>
+    <div class="status hidden">
+      <div class="ui message"></div>
+    </div>
+    <input type="hidden" name="target" value="https://aaronparecki.com/2018/12/17/7/blocking-domains">
+  </form>
+  
+  
+  
+          <ul>
+      <li class="p-comment h-cite comment">
+      <div class="p-author h-card author">
+                  <img class="u-photo" src="https://pkcdn.xyz/playvicious.social/9b9144f41aa329413223cc8779b82ed39e7256a5f28e1fdb1ea4e5e6c901cd47.png" width="48">
+                          <a class="p-name u-url" href="https://playvicious.social/@jalcine">Jacky Alcin&eacute;</a>
+          <a class="author_url" href="https://playvicious.social/@jalcine">playvicious.social/@jalcine</a>
+              </div>
+                                <!-- TODO: should this be e-summary if I've truncated it or if it came from the summary? -->
+          <div class="e-content p-name comment-content"><p><span class="h-card"><a href="https://retro.social/@freakazoid" class="u-url" rel="nofollow">@<span>freakazoid</span></a></span> This is a case for handling an attack vector (in the realm of spam) from <span class="h-card"><a href="https://aaronparecki.com/aaronpk" class="u-url" rel="nofollow">@<span>aaronpk</span></a></span> on the topic <a href="https://aaronparecki.com/2018/12/17/7/blocking-domains" rel="nofollow"><span>https://</span><span>aaronparecki.com/2018/12/17/7/</span><span>blocking-domains</span></a></p></div>
+                          <div class="metaline">
+        <a href="https://playvicious.social/@jalcine/101258612771728535" class="u-url">
+                    <time class="dt-published" datetime="2018-12-17T21:56:53+00:00">
+            Mon, Dec 17, 2018 9:56pm +00:00
+          </time>
+        </a>
+                      </div>
+    </li>
+      <li class="p-comment h-cite comment">
+      <div class="p-author h-card author">
+                  <img src="/assets/images/no-profile-photo.png" height="48">
+                                    <a class="p-name u-url" href="https://fireburn.ru">
+            fireburn.ru
+          </a>
+              </div>
+                                <!-- TODO: should this be e-summary if I've truncated it or if it came from the summary? -->
+          <div class="e-content p-name comment-content"><p>Finally there is a blocklist interface! Now I can send webmentions from myself and not block my domain.</p>
+<p>Do you plan on building a premoderation queue tied to Vouch support?</p></div>
+                          <div class="metaline">
+        <a href="https://fireburn.ru/reply/1545115549" class="u-url">
+                    <time class="dt-published" datetime="2018-12-18T09:45:49+03:00">
+            Tue, Dec 18, 2018 9:45am +03:00
+          </time>
+        </a>
+                      </div>
+    </li>
+    </ul>
+  <div style="clear:both;"></div>
+  
+      <h3 id="mentions">Other Mentions</h3>
+    <ul>
+      <li class="p-comment h-cite comment">
+      <div class="p-author h-card author">
+                  <img src="/assets/images/no-profile-photo.png" height="48">
+                                    <a class="p-name u-url" href="https://chrisburnell.com">
+            chrisburnell.com
+          </a>
+              </div>
+                                <b><a class="p-name name" href="https://chrisburnell.com/">
+            Chris Burnell
+          </a></b>
+                            <img src="https://pkcdn.xyz/chrisburnell.com/9ac30b63aeddbcb10a6b8b9e231022d86fe3d30e6e279c1bc0c341e103b64119.png" style="width:100%">
+            <div class="metaline">
+        <a href="https://chrisburnell.com/" class="u-url">
+                    <time class="dt-published" datetime="2018-12-18T08:58:31-08:00">
+            Tue, Dec 18, 2018 8:58am -08:00
+          </time>
+        </a>
+                      </div>
+    </li>
+    </ul>
+  <div style="clear:both;"></div>
+  
+</div>
+  </li>
+  </ul>
+
+    <div class="additional-info">
+          Posted in
+              <a href="/articles" class="u-p3k-channel">/articles</a>
+                     using
+      <a href="https://quill.p3k.io/">quill.p3k.io</a>
+        <!-- TODO: show privacy/visibility here, and allow editing if logged in -->
+    <!-- TODO: allow editing tags and channels here -->
+  </div>
+  
+</div>
+        </div>
+          </div>
+
+    <footer class="sticky-footer">
+              <div class="subfooter">
+          <div class="ui container h-card">
+  <div class="about">
+    <div class="image"><a href="/" class="u-url u-uid"><img src="/images/profile.jpg" class="u-photo"></a></div>
+    <div class="bio">
+      <div class="p-note">
+        <p>Hi, I'm <span class="p-name">Aaron<span style="display:none;"> Parecki</span></span>,  co-founder of
+<a class="p-org h-card" href="https://indieweb.org/">IndieWebCamp</a>.
+I maintain <a class="p-org h-card" href="https://oauth.net/">oauth.net</a>, <a href="/oauth/">write and consult about OAuth</a>, and
+am the editor of several <a href="/w3c/">W3C specfications</a>. I record <a href="https://backpedal.tv">videos for local conferences</a> and help run a <a href="https://streampdx.com">podcast studio in Portland</a>.</p>
+
+<p>I wrote <a href="https://100.aaronparecki.com/">100 songs in 100 days</a>! I've been <a href="/gps/">tracking my location</a> since 2008,
+and write down everything I <a href="/ate">eat</a> and <a href="/drank">drink</a>.
+I've <a href="/presentations">spoken</a> at conferences around the world about
+<a href="/presentations?tag=indieweb">owning your data</a>,
+<a href="/oauth/">OAuth</a>,
+<a href="/presentations?tag=quantifiedself">quantified self</a>,
+and explained <a href="https://www.youtube.com/watch?v=FGVJ0eXTRpw">why R is a vowel</a>. <a href="/about">Read more</a>.</p> <time class="dt-bday" datetime="--12-28"></time>      </div>
+    </div>
+    <div class="right">
+      <div class="follow">
+        <a href="/follow?path=primary" class="ui primary button">Follow</a>
+      </div>
+      <div class="orgs">
+        <ul>
+            <li class="p-org h-card">
+              <img src="/images/okta.png" alt="" class="u-photo">
+              <a href="https://developer.okta.com/" class="u-url">
+                <span class="p-name">Okta</span>
+              </a> 
+              <a class="p-role" href="https://developer.okta.com/blog/2018/03/27/welcome-aaron-okta">Developer Advocate</a>
+            </li>
+            <li class="p-org h-card">
+              <img src="/images/indiewebcamp.png" alt="" class="u-photo">
+              <a href="https://indieweb.org/" class="u-url">
+                <span class="p-name">IndieWebCamp</span>
+              </a> 
+              <a class="p-role" href="https://indieweb.org/founders">Founder</a>
+            </li>
+            <li class="p-org h-card">
+              <img src="/images/w3c.png" alt="" class="u-photo">
+              <a href="https://www.w3.org/" class="u-url">
+                <span class="p-name">W3C</span>
+              </a> 
+              <a class="p-role" href="/w3c/">Editor</a>
+            </li>
+            <li class="p-org h-card">
+              <img src="/images/streampdx.png" alt="" class="u-photo">
+              <a href="https://streampdx.com" class="u-url">
+                <span class="p-name">Stream PDX</span>
+              </a> 
+              <a class="p-role" href="https://streampdx.com/who">Co-Founder</a>
+            </li>
+            <li class="p-org h-card">
+              <img src="/images/backpedal.png" alt="" class="u-photo">
+              <a href="https://backpedal.tv" class="u-url">backpedal.tv</a> 
+            </li>
+            <li><br></li>
+            <!--
+            <li><img src="/images/spotify.ico" alt=""> <a href="/sunshine-indie-pop/">Sunshine Indie Pop</a></li>
+            -->
+            <li>
+              <img src="/images/microphone.png" alt="">
+              <a class="p-callsign u-url" href="https://w7apk.com">W7APK</a>
+            </li>
+            <li>⭐️ <a href="https://aaronparecki.com/life-stack/">Life Stack</a></li>
+          </ul>
+
+<link rel="pgpkey" href="/key.txt">
+<link rel="me" href="sms:+15035678642">
+<link rel="me" href="https://micro.blog/aaronpk">      </div>
+      <div class="search">
+        <form action="/search" method="get">
+          <div class="ui fluid icon input">
+            <input type="text" name="q" placeholder="Search..." value="">
+            <i class="search icon"></i>
+          </div>      
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="channels">
+    <ul class="footer-links">
+              <li><a href="/all">All</a></li>
+              <li><a href="/articles">Articles</a></li>
+              <li><a href="/bookmarks">Bookmarks</a></li>
+              <li><a href="/notes">Notes</a></li>
+              <li><a href="/photos">Photos</a></li>
+              <li><a href="/replies">Replies</a></li>
+              <li><a href="/reviews">Reviews</a></li>
+              <li><a href="/sleep">Sleep</a></li>
+              <li><a href="/travel">Travel</a></li>
+            <li><a href="/contact">Contact</a></li>
+    </ul>
+  </div>
+    <div class="elsewhere">
+    <ul class="footer-links">
+              <li><a href="https://twitter.com/aaronpk" rel=""><i class="twitter icon"></i></a></li>
+              <li><a href="https://twitter.com/w7apk" rel=""><i class="twitter icon"></i></a></li>
+              <li><a href="https://facebook.com/aaronpk" rel=""><i class="facebook icon"></i></a></li>
+              <li><a href="https://instagram.com/aaronpk" rel=""><i class="instagram icon"></i></a></li>
+              <li><a href="http://flickr.com/aaronpk" rel=""><i class="flickr icon"></i></a></li>
+              <li><a href="https://github.com/aaronpk" rel=""><i class="github icon"></i></a></li>
+              <li><a href="https://youtube.com/TheAaronpk" rel=""><i class="youtube play icon"></i></a></li>
+              <li><a href="https://google.com/+aaronpk" rel=""><i class="google plus icon"></i></a></li>
+              <li><a href="http://foursquare.com/aaronpk" rel=""><i class="foursquare icon"></i></a></li>
+              <li><a href="http://www.linkedin.com/in/aaronparecki" rel=""><i class="linkedin icon"></i></a></li>
+              <li><a href="http://aaronpk.eventbrite.com/" rel=""><i class="icon-eventbrite icon"></i></a></li>
+              <li><a href="http://www.slideshare.net/aaronpk" rel=""><i class="slideshare icon"></i></a></li>
+              <li><a href="https://www.beeminder.com/aaronpk" rel=""><i class="icon-beeminder icon"></i></a></li>
+              <li><a href="http://www.colourlovers.com/lover/aaronpk" rel=""><i class="icon-colourlovers icon"></i></a></li>
+              <li><a href="http://www.last.fm/user/aaron_pk" rel=""><i class="lastfm icon"></i></a></li>
+              <li><a href="https://www.w3.org/users/59996" rel=""><i class="icon-w3c icon"></i></a></li>
+              <li><a href="https://keybase.io/aaronpk/" rel=""><i class="key icon"></i></a></li>
+              <li><a href="https://cash.me/$aaronpk" rel=""><i class="icon-squarecash icon"></i></a></li>
+              <li><a href="https://venmo.com/aaronpk" rel=""><i class="icon-venmo icon"></i></a></li>
+              <li><a href="https://paypal.me/apk" rel=""><i class="paypal icon"></i></a></li>
+              <li><a href="mailto:aaron@parecki.com" rel=""><i class="mail icon"></i></a></li>
+          </ul>
+  </div>
+</div>
+        </div>
+      
+      <div class="footer">
+        <a href="/login" class="hidden-login"></a>
+        <div>
+          <span>&copy; 1999-2018 by Aaron Parecki.</span>
+          <span>Powered by <a href="http://p3k.io/">p3k</a>.</span>
+          <span>This site supports <a href="https://webmention.net/">Webmention</a>.</span>
+        </div>
+        <div>
+          <span>Except where otherwise noted, text content on this site is licensed
+            under a <a href="http://creativecommons.org/licenses/by/3.0/" rel="license">Creative Commons Attribution 3.0 License</a>.</span>
+        </div>
+        <div class="badges" style="padding-top: 8px;">
+          <a href="https://indieweb.org/"><img src="/assets/badges/indieweb.png" width="80" height="15" alt="IndieWebCamp" style="image-rendering: pixelated;"></a>
+          <a href="http://microformats.org/"><img src="/assets/badges/microformats.png" width="80" height="15" alt="Microformats" style="image-rendering: pixelated;"></a>
+          <a href="https://indieweb.org/Webmention"><img src="/assets/badges/webmention.png" width="80" height="15" alt="Webmention" style="image-rendering: pixelated;"></a>
+          <img src="/assets/badges/w3c-valid-html.png" width="80" height="15" alt="W3C HTML5" style="image-rendering: pixelated;">
+          <a href="http://creativecommons.org/licenses/by/3.0/"><img src="/assets/badges/cc-commons.png" width="80" height="15" alt="Creative Commons" style="image-rendering: pixelated;"></a>
+        </div>
+              </div>
+    </footer>
+
+    <input type="hidden" id="permalink" value="https://aaronparecki.com/2018/12/17/7/blocking-domains">
+    
+    <script src="/assets/script.js"></script>
+    <script src="/assets/webmention.js"></script>
+
+    <script src="/assets/admin.js"></script>
+
+    <script>
+      // Lolz. https://www.youtube.com/watch?v=EZpdEljk5dY
+      // thanks seblog.nl!
+      let photo = document.querySelector('.about .image img')
+      if(photo) {
+        window.addEventListener('deviceorientation', (e) => {
+          let tiltLR = e.gamma; let tiltFB = e.beta;
+          photo.style.transform = `rotate(${tiltLR * -1}deg)`
+        })
+      }
+    </script>
+
+        <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-4617305-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+  </body>
+</html>
