@@ -47,6 +47,10 @@ It will parse the object to a structure like that:
                               category: ["Strategy",
                                          "Leadership"]}}]}
 
+You can also provide HTML trees already parsed with Floki:
+
+    Microformats2.parse(Floki.parse("""<div class="h-card">...</div>"""))
+
 ## Dependencies
 
 We need [Floki](https://github.com/philss/floki) for HTML parsing and
