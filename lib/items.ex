@@ -132,14 +132,16 @@ defmodule Microformats2.Items do
   defp parse_prop(_, _, _, _), do: nil
 
   defp get_value(class, p) do
+    name_key = if Application.get_env(:microformats2, :atomize_keys, true), do: :name, else: "name"
+    url_key = if Application.get_env(:microformats2, :atomize_keys, true), do: :url, else: "url"
     cond do
-      Microformats2.is_a?(class, "p") and p[:properties][:name] != nil ->
-        List.first(p[:properties][:name])
+      Microformats2.is_a?(class, "p") and p[:properties][name_key] != nil ->
+        List.first(p[:properties][name_key])
 
-      Microformats2.is_a?(class, "u") and p[:properties][:url] != nil ->
-        List.first(p[:properties][:url])
+      Microformats2.is_a?(class, "u") and p[:properties][url_key] != nil ->
+        List.first(p[:properties][url_key])
 
-      # and p[:properties][:url] != nil ->
+      # and p[:properties][url_key] != nil ->
       Microformats2.is_a?(class, "e") ->
         # TODO handle
         nil
@@ -160,7 +162,8 @@ defmodule Microformats2.Items do
             parse_prop(class, child, doc, url)
           end
 
-        key = strip_prefix(class) |> to_key |> String.to_atom()
+        key = strip_prefix(class) |> to_key
+        key = if Application.get_env(:microformats2, :atomize_keys, true), do: String.to_atom(key), else: key
         val = if acc[key] != nil, do: acc[key], else: []
         Map.put(acc, key, val ++ [prop])
       end)
