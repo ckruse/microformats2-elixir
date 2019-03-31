@@ -9,9 +9,11 @@ defmodule Microformats2 do
     end
   end
 
+  def parse(content, url) when is_binary(content), do: parse(Floki.parse(content), url)
+
   def parse(content, url) do
     doc =
-      Floki.parse(content)
+      content
       |> Floki.filter_out("template")
       |> Floki.filter_out("style")
       |> Floki.filter_out("script")

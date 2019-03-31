@@ -6,7 +6,8 @@ defmodule Microformats2.Items.ImpliedProperties do
   end
 
   defp implied_url_property(entry, root, doc_url, doc) do
-    if entry[:properties][:url] == nil do
+    url_key = if Application.get_env(:microformats2, :atomize_keys, true), do: :url, else: "url"
+    if entry[:properties][url_key] == nil do
       val = implied_url_attrval(root)
 
       url =
@@ -20,7 +21,7 @@ defmodule Microformats2.Items.ImpliedProperties do
       if Microformats2.blank?(url) do
         entry
       else
-        Map.put(entry, :properties, Map.put(entry[:properties], :url, [Microformats2.abs_uri(url, doc_url, doc)]))
+        Map.put(entry, :properties, Map.put(entry[:properties], url_key, [Microformats2.abs_uri(url, doc_url, doc)]))
       end
     else
       entry
@@ -28,7 +29,8 @@ defmodule Microformats2.Items.ImpliedProperties do
   end
 
   defp implied_photo_property(entry, root) do
-    if entry[:properties][:photo] == nil do
+    photo_key = if Application.get_env(:microformats2, :atomize_keys, true), do: :photo, else: "photo"
+    if entry[:properties][photo_key] == nil do
       val = implied_photo_attrval(root)
 
       url =
@@ -42,7 +44,7 @@ defmodule Microformats2.Items.ImpliedProperties do
       if Microformats2.blank?(url) do
         entry
       else
-        Map.put(entry, :properties, Map.put(entry[:properties], :photo, [url]))
+        Map.put(entry, :properties, Map.put(entry[:properties], photo_key, [url]))
       end
     else
       entry
@@ -50,7 +52,8 @@ defmodule Microformats2.Items.ImpliedProperties do
   end
 
   defp implied_name_property(entry, root = {elem, _, _}) do
-    if entry[:properties][:name] == nil do
+    name_key = if Application.get_env(:microformats2, :atomize_keys, true), do: :name, else: "name"
+    if entry[:properties][name_key] == nil do
       nam =
         cond do
           elem == "img" or elem == "area" ->
@@ -70,7 +73,7 @@ defmodule Microformats2.Items.ImpliedProperties do
         end
         |> Microformats2.stripped_or_nil()
 
-      Map.put(entry, :properties, Map.put(entry[:properties], :name, [nam]))
+      Map.put(entry, :properties, Map.put(entry[:properties], name_key, [nam]))
     else
       entry
     end
