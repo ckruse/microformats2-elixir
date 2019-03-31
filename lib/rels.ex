@@ -1,4 +1,6 @@
 defmodule Microformats2.Rels do
+  import Microformats2.Helpers
+
   def parse(doc, base_url) do
     link_rels =
       Floki.find(doc, "[rel][href]")
@@ -9,8 +11,8 @@ defmodule Microformats2.Rels do
         String.trim(to_string(rel)) != "" and String.trim(to_string(href)) != ""
       end)
       |> Enum.reduce(%{rels: %{}, rel_urls: %{}}, fn element, acc ->
-        rel = Microformats2.attr_list(element, "rel")
-        url = Floki.attribute(element, "href") |> List.first() |> Microformats2.abs_uri(base_url, doc)
+        rel = attr_list(element, "rel")
+        url = Floki.attribute(element, "href") |> List.first() |> abs_uri(base_url, doc)
 
         acc
         |> save_urls_by_rels(rel, url)
@@ -23,45 +25,34 @@ defmodule Microformats2.Rels do
 
   defp save_urls_by_rels(map, rel, url) do
     Enum.reduce(rel, map, fn rel, nmap ->
-      if nmap[:rels][rel] == nil do
-        Map.put(nmap, :rels, Map.put(nmap[:rels], rel, [url]))
-      else
-        Map.put(nmap, :rels, Map.put(nmap[:rels], rel, Enum.uniq(nmap[:rels][rel] ++ [url])))
-      end
+      if nmap[:rels][rel] == nil,
+        do: put_in(nmap, [:rels, rel], [url]),
+        else: put_in(nmap, [:rels, rel], Enum.uniq(nmap[:rels][rel] ++ [url]))
     end)
   end
 
   defp save_rels_by_urls(map, rel, url) do
-    if map[:rel_urls][url] == nil do
-      Map.put(map, :rel_urls, Map.put(map[:rel_urls], url, %{rels: rel}))
-    else
-      Map.put(
-        map,
-        :rel_urls,
-        Map.put(map[:rel_urls], url, Map.put(map[:rel_urls][url], :rels, Enum.uniq(map[:rel_urls][url][:rels] ++ rel)))
-      )
-    end
+    if map[:rel_urls][url] == nil,
+      do: put_in(map, [:rel_urls, url], %{rels: rel}),
+      else: put_in(map, [:rel_urls, url, :rels], Enum.uniq(map[:rel_urls][url][:rels] ++ rel))
   end
 
   defp save_text(map, element, url) do
     text = Floki.text(element)
 
-    if String.trim(to_string(text)) == "" or map[:rel_urls][url][:text] != nil do
-      map
-    else
-      Map.put(map, :rel_urls, Map.put(map[:rel_urls], url, Map.put(map[:rel_urls][url], :text, text)))
-    end
+    if String.trim(to_string(text)) == "" or map[:rel_urls][url][:text] != nil,
+      do: map,
+      else: put_in(map, [:rel_urls, url, :text], text)
   end
 
   defp save_attributes(map, element, url) do
     Enum.reduce(["hreflang", "media", "title", "type"], save_text(map, element, url), fn att, nmap ->
       val = Floki.attribute(element, att) |> List.first()
+      key = String.to_atom(att)
 
-      if String.trim(to_string(val)) == "" or nmap[:rel_urls][url][String.to_atom(att)] != nil do
-        nmap
-      else
-        Map.put(nmap, :rel_urls, Map.put(nmap[:rel_urls], url, Map.put(nmap[:rel_urls][url], String.to_atom(att), val)))
-      end
+      if String.trim(to_string(val)) == "" or nmap[:rel_urls][url][key] != nil,
+        do: nmap,
+        else: put_in(nmap, [:rel_urls, url, key], val)
     end)
   end
 end

@@ -1,4 +1,8 @@
 defmodule Microformats2.Items do
+  import Microformats2.Helpers
+
+  alias Microformats2.Items.ImpliedProperties
+
   def parse(nodes, doc, url, items \\ [])
   def parse([head | tail], doc, url, items) when is_bitstring(head), do: parse(tail, doc, url, items)
   def parse([head | tail], doc, url, items), do: parse(tail, doc, url, parse(head, doc, url, items))
@@ -6,8 +10,8 @@ defmodule Microformats2.Items do
 
   def parse(root, doc, url, items) do
     root_classes =
-      Microformats2.attr_list(root)
-      |> Enum.filter(fn class_name -> Microformats2.is_rootlevel?(class_name) end)
+      attr_list(root)
+      |> Enum.filter(&is_rootlevel?/1)
       |> Enum.sort()
 
     {_, _, children} = root
@@ -15,7 +19,7 @@ defmodule Microformats2.Items do
     if not Enum.empty?(root_classes) do
       entry =
         parse_sub(children, doc, url, %{type: root_classes, properties: %{}})
-        |> Microformats2.Items.ImpliedProperties.parse(root, url, doc)
+        |> ImpliedProperties.parse(root, url, doc)
 
       items ++ [entry]
     else
@@ -28,14 +32,14 @@ defmodule Microformats2.Items do
 
   defp parse_sub([child = {_, _, child_children} | children], doc, url, item) do
     p =
-      if Microformats2.has_a?(child, "h-") do
+      if has_a?(child, "h-") do
         parse(child, doc, url, []) |> List.first()
       else
         []
       end
 
     classes =
-      Microformats2.attr_list(child)
+      attr_list(child)
       |> Enum.filter(fn
         "p-" <> _ -> true
         "u-" <> _ -> true
@@ -45,7 +49,11 @@ defmodule Microformats2.Items do
       end)
 
     props = gen_prop(child, classes, item, p, doc, url)
-    n_item = if Microformats2.is_rootlevel?(child), do: props, else: parse_sub(child_children, doc, url, props)
+
+    n_item =
+      if is_rootlevel?(child),
+        do: props,
+        else: parse_sub(child_children, doc, url, props)
 
     parse_sub(children, doc, url, n_item)
   end
@@ -57,10 +65,10 @@ defmodule Microformats2.Items do
     alt = Floki.attribute(child, "alt") |> List.first()
 
     cond do
-      elem == "abbr" and not Microformats2.blank?(title) ->
+      elem == "abbr" and present?(title) ->
         title
 
-      elem == "img" and not Microformats2.blank?(alt) ->
+      elem == "img" and present?(alt) ->
         alt
 
       true ->
@@ -77,29 +85,29 @@ defmodule Microformats2.Items do
     value = Floki.attribute(child, "value") |> List.first()
 
     cond do
-      Enum.member?(["a", "area"], elem) and not Microformats2.blank?(href) ->
+      Enum.member?(["a", "area"], elem) and present?(href) ->
         href
 
-      Enum.member?(["img", "audio", "video", "source"], elem) and not Microformats2.blank?(src) ->
+      Enum.member?(["img", "audio", "video", "source"], elem) and present?(src) ->
         src
 
-      elem == "object" and not Microformats2.blank?(data) ->
+      elem == "object" and present?(data) ->
         data
 
-      elem == "video" and not Microformats2.blank?(poster) ->
+      elem == "video" and present?(poster) ->
         poster
 
       # TODO value-class-pattern at this position
-      elem == "abbr" and not Microformats2.blank?(title) ->
+      elem == "abbr" and present?(title) ->
         title
 
-      Enum.member?(["data", "input"], elem) and not Microformats2.blank?(value) ->
+      Enum.member?(["data", "input"], elem) and present?(value) ->
         value
 
       true ->
         text_content(child) |> String.trim()
     end
-    |> Microformats2.abs_uri(url, doc)
+    |> abs_uri(url, doc)
   end
 
   defp parse_prop("dt-" <> _, child = {elem, _, _}, _, _) do
@@ -108,13 +116,13 @@ defmodule Microformats2.Items do
     value = Floki.attribute(child, "value")
 
     cond do
-      Enum.member?(["time", "ins", "del"], elem) and not Microformats2.blank?(dt) ->
+      Enum.member?(["time", "ins", "del"], elem) and present?(dt) ->
         dt |> List.first()
 
-      elem == "abbr" and not Microformats2.blank?(title) ->
+      elem == "abbr" and present?(title) ->
         title |> List.first()
 
-      Enum.member?(["data", "input"], elem) and not Microformats2.blank?(value) ->
+      Enum.member?(["data", "input"], elem) and present?(value) ->
         value |> List.first()
 
       true ->
@@ -124,25 +132,26 @@ defmodule Microformats2.Items do
 
   defp parse_prop("e-" <> _, child = {_, _, children}, _, _) do
     %{
-      html: Microformats2.stripped_or_nil(Floki.raw_html(children)),
-      text: Microformats2.stripped_or_nil(Floki.text(child))
+      html: stripped_or_nil(Floki.raw_html(children)),
+      text: stripped_or_nil(Floki.text(child))
     }
   end
 
   defp parse_prop(_, _, _, _), do: nil
 
   defp get_value(class, p) do
-    name_key = if Application.get_env(:microformats2, :atomize_keys, true), do: :name, else: "name"
-    url_key = if Application.get_env(:microformats2, :atomize_keys, true), do: :url, else: "url"
+    name_key = normalized_key("name")
+    url_key = normalized_key("url")
+
     cond do
-      Microformats2.is_a?(class, "p") and p[:properties][name_key] != nil ->
+      is_a?(class, "p") and p[:properties][name_key] != nil ->
         List.first(p[:properties][name_key])
 
-      Microformats2.is_a?(class, "u") and p[:properties][url_key] != nil ->
+      is_a?(class, "u") and p[:properties][url_key] != nil ->
         List.first(p[:properties][url_key])
 
       # and p[:properties][url_key] != nil ->
-      Microformats2.is_a?(class, "e") ->
+      is_a?(class, "e") ->
         # TODO handle
         nil
 
@@ -156,44 +165,27 @@ defmodule Microformats2.Items do
     props =
       Enum.reduce(classes, item[:properties], fn class, acc ->
         prop =
-          if Microformats2.is_rootlevel?(child) do
+          if is_rootlevel?(child) do
             Map.put(p, :value, get_value(class, p))
           else
             parse_prop(class, child, doc, url)
           end
 
-        key = strip_prefix(class) |> to_key
-        key = if Application.get_env(:microformats2, :atomize_keys, true), do: String.to_atom(key), else: key
+        key = strip_prefix(class) |> to_key |> normalized_key()
         val = if acc[key] != nil, do: acc[key], else: []
         Map.put(acc, key, val ++ [prop])
       end)
 
-    if Microformats2.blank?(classes) and not Microformats2.blank?(p) and Microformats2.is_rootlevel?(child) do
-      Map.put(item, :children, (item[:children] || []) ++ [p])
-    else
-      Map.put(item, :properties, props)
-    end
+    if blank?(classes) and present?(p) and is_rootlevel?(child),
+      do: Map.update(item, :children, [p], &(&1 ++ [p])),
+      else: Map.put(item, :properties, props)
   end
 
-  defp strip_prefix("p-" <> rest) do
-    rest
-  end
-
-  defp strip_prefix("u-" <> rest) do
-    rest
-  end
-
-  defp strip_prefix("dt-" <> rest) do
-    rest
-  end
-
-  defp strip_prefix("e-" <> rest) do
-    rest
-  end
-
-  defp strip_prefix(rest) do
-    rest
-  end
+  defp strip_prefix("p-" <> rest), do: rest
+  defp strip_prefix("u-" <> rest), do: rest
+  defp strip_prefix("dt-" <> rest), do: rest
+  defp strip_prefix("e-" <> rest), do: rest
+  defp strip_prefix(rest), do: rest
 
   def text_content(child, text \\ "")
 
@@ -202,7 +194,7 @@ defmodule Microformats2.Items do
       if elem == "img" do
         alt = Floki.attribute(child, "alt")
 
-        if !Microformats2.blank?(alt) do
+        if !blank?(alt) do
           alt
         else
           Floki.attribute(child, "src")
@@ -212,16 +204,8 @@ defmodule Microformats2.Items do
         ""
       end
 
-    Enum.reduce(children, text <> txt, fn child, acc ->
-      text_content(child, acc)
-    end)
+    Enum.reduce(children, text <> txt, &text_content/2)
   end
 
-  def text_content(child, text) when is_bitstring(child) do
-    text <> child
-  end
-
-  defp to_key(str) do
-    String.replace(str, ~r/[-]/, "_")
-  end
+  def text_content(child, text) when is_bitstring(child), do: text <> child
 end

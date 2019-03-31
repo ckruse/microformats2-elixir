@@ -1,58 +1,62 @@
 defmodule Microformats2.Items.ImpliedProperties do
+  import Microformats2.Helpers
+
+  alias Microformats2.Items
+
   def parse(entry, root, url, doc) do
-    implied_name_property(entry, root)
+    entry
+    |> implied_name_property(root)
     |> implied_photo_property(root)
     |> implied_url_property(root, url, doc)
   end
 
   defp implied_url_property(entry, root, doc_url, doc) do
-    url_key = if Application.get_env(:microformats2, :atomize_keys, true), do: :url, else: "url"
+    url_key = normalized_key("url")
+
     if entry[:properties][url_key] == nil do
       val = implied_url_attrval(root)
 
       url =
-        if Microformats2.blank?(val) do
+        if blank?(val) do
           implied_url_deep(root)
         else
           val
         end
-        |> Microformats2.stripped_or_nil()
+        |> stripped_or_nil()
 
-      if Microformats2.blank?(url) do
-        entry
-      else
-        Map.put(entry, :properties, Map.put(entry[:properties], url_key, [Microformats2.abs_uri(url, doc_url, doc)]))
-      end
+      if blank?(url),
+        do: entry,
+        else: put_in(entry, [:properties, url_key], [abs_uri(url, doc_url, doc)])
     else
       entry
     end
   end
 
   defp implied_photo_property(entry, root) do
-    photo_key = if Application.get_env(:microformats2, :atomize_keys, true), do: :photo, else: "photo"
+    photo_key = normalized_key("photo")
+
     if entry[:properties][photo_key] == nil do
       val = implied_photo_attrval(root)
 
       url =
-        if Microformats2.blank?(val) do
+        if blank?(val) do
           implied_photo_deep(root)
         else
           val
         end
-        |> Microformats2.stripped_or_nil()
+        |> stripped_or_nil()
 
-      if Microformats2.blank?(url) do
-        entry
-      else
-        Map.put(entry, :properties, Map.put(entry[:properties], photo_key, [url]))
-      end
+      if blank?(url),
+        do: entry,
+        else: put_in(entry, [:properties, photo_key], [url])
     else
       entry
     end
   end
 
   defp implied_name_property(entry, root = {elem, _, _}) do
-    name_key = if Application.get_env(:microformats2, :atomize_keys, true), do: :name, else: "name"
+    name_key = normalized_key("name")
+
     if entry[:properties][name_key] == nil do
       nam =
         cond do
@@ -65,38 +69,28 @@ defmodule Microformats2.Items.ImpliedProperties do
           true ->
             val = implied_name_deep(root)
 
-            if Microformats2.blank?(val) do
-              Microformats2.Items.text_content(root)
-            else
-              val
-            end
+            if blank?(val),
+              do: Items.text_content(root),
+              else: val
         end
-        |> Microformats2.stripped_or_nil()
+        |> stripped_or_nil()
 
-      Map.put(entry, :properties, Map.put(entry[:properties], name_key, [nam]))
+      put_in(entry, [:properties, name_key], [nam])
     else
       entry
     end
   end
 
   defp implied_name_deep({_, _, children}) do
-    only_nodes =
-      Enum.filter(children, fn
-        el when is_bitstring(el) -> false
-        _ -> true
-      end)
+    only_nodes = Enum.reject(children, &is_bitstring/1)
 
     if Enum.count(only_nodes) == 1 do
       sec_node = List.first(only_nodes)
       {_, _, sec_node_children} = sec_node
       attrval = implied_name_attrval(sec_node)
 
-      if Microformats2.blank?(attrval) do
-        sec_only_nodes =
-          Enum.filter(sec_node_children, fn
-            el when is_bitstring(el) -> false
-            _ -> true
-          end)
+      if blank?(attrval) do
+        sec_only_nodes = Enum.reject(sec_node_children, &is_bitstring/1)
 
         if Enum.count(sec_only_nodes) == 1 do
           third_node = sec_only_nodes |> List.first()
@@ -108,21 +102,10 @@ defmodule Microformats2.Items.ImpliedProperties do
     end
   end
 
-  defp implied_name_attrval(node = {"img", _, _}) do
-    Floki.attribute(node, "alt") |> List.first()
-  end
-
-  defp implied_name_attrval(node = {"area", _, _}) do
-    Floki.attribute(node, "alt") |> List.first()
-  end
-
-  defp implied_name_attrval(node = {"abbr", _, _}) do
-    Floki.attribute(node, "title") |> List.first()
-  end
-
-  defp implied_name_attrval(_) do
-    nil
-  end
+  defp implied_name_attrval(node = {"img", _, _}), do: Floki.attribute(node, "alt") |> List.first()
+  defp implied_name_attrval(node = {"area", _, _}), do: Floki.attribute(node, "alt") |> List.first()
+  defp implied_name_attrval(node = {"abbr", _, _}), do: Floki.attribute(node, "title") |> List.first()
+  defp implied_name_attrval(_), do: nil
 
   defp implied_photo_deep(root) do
     imgs = direct_not_h_children_with_attr(root, "img", "src")
@@ -137,12 +120,7 @@ defmodule Microformats2.Items.ImpliedProperties do
 
       true ->
         {_, _, children} = root
-
-        only_nodes =
-          Enum.filter(children, fn
-            el when is_bitstring(el) -> false
-            _ -> true
-          end)
+        only_nodes = Enum.reject(children, &is_bitstring/1)
 
         if Enum.count(only_nodes) == 1 do
           child = List.first(children)
@@ -181,36 +159,20 @@ defmodule Microformats2.Items.ImpliedProperties do
     end
   end
 
-  defp implied_photo_attrval(node = {"img", _, _}) do
-    Floki.attribute(node, "src") |> List.first()
-  end
-
-  defp implied_photo_attrval(node = {"object", _, _}) do
-    Floki.attribute(node, "data") |> List.first()
-  end
-
-  defp implied_photo_attrval(_) do
-    nil
-  end
+  defp implied_photo_attrval(node = {"img", _, _}), do: Floki.attribute(node, "src") |> List.first()
+  defp implied_photo_attrval(node = {"object", _, _}), do: Floki.attribute(node, "data") |> List.first()
+  defp implied_photo_attrval(_), do: nil
 
   defp direct_not_h_children_with_attr({_, _, children}, name, attr) do
     Enum.filter(children, fn
       {el, _, _} -> el == name
       v when is_bitstring(v) -> false
     end)
-    |> Enum.filter(fn el -> not Microformats2.is_rootlevel?(el) end)
+    |> Enum.filter(fn el -> not is_rootlevel?(el) end)
     |> Enum.filter(fn el -> Enum.count(Floki.attribute(el, attr)) > 0 end)
   end
 
-  defp implied_url_attrval(node = {"a", _, _}) do
-    Floki.attribute(node, "href") |> List.first()
-  end
-
-  defp implied_url_attrval(node = {"area", _, _}) do
-    Floki.attribute(node, "href") |> List.first()
-  end
-
-  defp implied_url_attrval(_) do
-    nil
-  end
+  defp implied_url_attrval(node = {"a", _, _}), do: Floki.attribute(node, "href") |> List.first()
+  defp implied_url_attrval(node = {"area", _, _}), do: Floki.attribute(node, "href") |> List.first()
+  defp implied_url_attrval(_), do: nil
 end
