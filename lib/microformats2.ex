@@ -63,11 +63,11 @@ defmodule Microformats2 do
 
     cond do
       # absolute URI
-      not Microformats2.blank?(parsed.scheme) ->
+      not blank?(parsed.scheme) ->
         url
 
       # protocol relative URI
-      Microformats2.blank?(parsed.scheme) and not Microformats2.blank?(parsed.host) ->
+      blank?(parsed.scheme) and not blank?(parsed.host) ->
         URI.to_string(%{parsed | scheme: parsed_base.scheme})
 
       true ->
