@@ -74,7 +74,7 @@ defmodule Microformats2 do
         base_element = Floki.find(doc, "base")
 
         new_base =
-          if base_element == nil or Microformats2.blank?(Floki.attribute(base_element, "href")) do
+          if blank?(base_element) or blank?(Floki.attribute(base_element, "href")) do
             base_url
           else
             abs_uri(Floki.attribute(base_element, "href") |> List.first(), base_url, [])
