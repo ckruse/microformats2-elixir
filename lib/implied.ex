@@ -123,7 +123,7 @@ defmodule Microformats2.Items.ImpliedProperties do
         only_nodes = Enum.reject(children, &is_bitstring/1)
 
         if Enum.count(only_nodes) == 1 do
-          child = List.first(children)
+          child = List.first(only_nodes)
           sec_imgs = direct_not_h_children_with_attr(child, "img", "src")
           sec_objs = direct_not_h_children_with_attr(child, "object", "data")
 
