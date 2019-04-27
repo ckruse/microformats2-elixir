@@ -405,52 +405,52 @@ defmodule Microformats2ItemsTest do
                    ],
                    like: [
                      %{
-                       properties: %{
-                         author: [
-                           %{
-                             properties: %{
-                               name: ["Eddie Hinkle"],
-                               photo: [
-                                 "https://pkcdn.xyz/eddiehinkle.com/cf9f85e26d4be531bc908d37f69bff1c50b50b87fd066b254f1332c3553df1a8.jpg"
-                               ],
-                               url: ["https://eddiehinkle.com/"]
-                             },
-                             type: ["h-card"],
-                             value: "Eddie Hinkle"
-                           }
-                         ],
-                         name: [
-                           "https://pkcdn.xyz/eddiehinkle.com/cf9f85e26d4be531bc908d37f69bff1c50b50b87fd066b254f1332c3553df1a8.jpgEddie Hinkle"
-                         ],
-                         url: ["https://eddiehinkle.com/2018/12/18/1/like/"]
-                       },
-                       type: ["h-cite"],
-                       value:
-                         "https://pkcdn.xyz/eddiehinkle.com/cf9f85e26d4be531bc908d37f69bff1c50b50b87fd066b254f1332c3553df1a8.jpgEddie Hinkle"
+                       #        properties: %{
+                       #          author: [
+                       #            %{
+                       #              properties: %{
+                       #                name: ["Eddie Hinkle"],
+                       #                photo: [
+                       #                  "https://pkcdn.xyz/eddiehinkle.com/cf9f85e26d4be531bc908d37f69bff1c50b50b87fd066b254f1332c3553df1a8.jpg"
+                       #                ],
+                       #                url: ["https://eddiehinkle.com/"]
+                       #              },
+                       #              type: ["h-card"],
+                       #              value: "Eddie Hinkle"
+                       #            }
+                       #          ],
+                       #          name: [
+                       #            "https://pkcdn.xyz/eddiehinkle.com/cf9f85e26d4be531bc908d37f69bff1c50b50b87fd066b254f1332c3553df1a8.jpgEddie Hinkle"
+                       #          ],
+                       #          url: ["https://eddiehinkle.com/2018/12/18/1/like/"]
+                       #        },
+                       #        type: ["h-cite"],
+                       #        value:
+                       #          "https://pkcdn.xyz/eddiehinkle.com/cf9f85e26d4be531bc908d37f69bff1c50b50b87fd066b254f1332c3553df1a8.jpgEddie Hinkle"
                      },
                      %{
-                       properties: %{
-                         author: [
-                           %{
-                             properties: %{
-                               name: ["Vika"],
-                               photo: [
-                                 "https://pkcdn.xyz/fireburn.ru/2c643998489fa0cea4689c0a154470f6e133f3ea0547fcce463eaf99312f3e42.png"
-                               ],
-                               url: ["https://fireburn.ru/"]
-                             },
-                             type: ["h-card"],
-                             value: "Vika"
-                           }
-                         ],
-                         name: [
-                           "https://pkcdn.xyz/fireburn.ru/2c643998489fa0cea4689c0a154470f6e133f3ea0547fcce463eaf99312f3e42.pngVika"
-                         ],
-                         url: ["https://fireburn.ru/like/1545115461"]
-                       },
-                       type: ["h-cite"],
-                       value:
-                         "https://pkcdn.xyz/fireburn.ru/2c643998489fa0cea4689c0a154470f6e133f3ea0547fcce463eaf99312f3e42.pngVika"
+                       #        properties: %{
+                       #          author: [
+                       #            %{
+                       #              properties: %{
+                       #                name: ["Vika"],
+                       #                photo: [
+                       #                  "https://pkcdn.xyz/fireburn.ru/2c643998489fa0cea4689c0a154470f6e133f3ea0547fcce463eaf99312f3e42.png"
+                       #                ],
+                       #                url: ["https://fireburn.ru/"]
+                       #              },
+                       #              type: ["h-card"],
+                       #              value: "Vika"
+                       #            }
+                       #          ],
+                       #          name: [
+                       #            "https://pkcdn.xyz/fireburn.ru/2c643998489fa0cea4689c0a154470f6e133f3ea0547fcce463eaf99312f3e42.pngVika"
+                       #          ],
+                       #          url: ["https://fireburn.ru/like/1545115461"]
+                       #        },
+                       #        type: ["h-cite"],
+                       #        value:
+                       #          "https://pkcdn.xyz/fireburn.ru/2c643998489fa0cea4689c0a154470f6e133f3ea0547fcce463eaf99312f3e42.pngVika"
                      }
                    ],
                    location: [
@@ -638,5 +638,51 @@ defmodule Microformats2ItemsTest do
                "webmention" => ["https://webmention.io/aaronpk/webmention"]
              }
            } = Microformats2.parse(str, "http://localhost")
+  end
+
+  test "invalid attrs" do
+    str = File.read!("./test/documents/invalid-attrs.html")
+
+    assert %{
+             items: [
+               %{
+                 properties: %{
+                   author: [
+                     %{
+                       properties: %{
+                         name: [
+                           "http://localhost:9000/koype-dev/photos/floating/original_self-portrait.jpgJacky Alciné"
+                         ],
+                         photo: ["http://localhost:9000/koype-dev/photos/floating/original_self-portrait.jpg"],
+                         url: ["http://localhost/"]
+                       },
+                       type: ["h-card"],
+                       value: "http://localhost/"
+                     }
+                   ],
+                   like_of: [
+                     %{
+                       properties: %{
+                         name: ["67efebc0.ngrok.io"],
+                         url: ["http://67efebc0.ngrok.io/post/b5a600c5-98a0-4112-b2d5-9df7c600f5e2"]
+                       },
+                       type: ["h-cite"],
+                       value: "http://67efebc0.ngrok.io/post/b5a600c5-98a0-4112-b2d5-9df7c600f5e2"
+                     }
+                   ],
+                   name: ["LikedLiked\n            67efebc0.ngrok.io"],
+                   published: ["2018-12-19T00:19:04.410503Z"],
+                   summary: ["LikedLiked\n            67efebc0.ngrok.io"],
+                   uid: ["http://localhost/post/a4ab5c98-c476-4800-9f09-2f7f5a337f32"],
+                   updated: ["2018-12-19 00:19:04.406330"],
+                   url: ["http://localhost/post/a4ab5c98-c476-4800-9f09-2f7f5a337f32"]
+                 },
+                 type: ["h-entry"]
+               }
+             ],
+             rel_urls: %{"http://localhost/" => %{rels: ["me"], text: "Jacky Alciné"}},
+             rels: %{"me" => ["http://localhost/"]}
+           } =
+             Microformats2.parse(str, "http://localhost")
   end
 end

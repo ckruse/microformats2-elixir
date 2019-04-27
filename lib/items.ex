@@ -39,14 +39,9 @@ defmodule Microformats2.Items do
       end
 
     classes =
-      attr_list(child)
-      |> Enum.filter(fn
-        "p-" <> _ -> true
-        "u-" <> _ -> true
-        "dt-" <> _ -> true
-        "e-" <> _ -> true
-        _ -> false
-      end)
+      child
+      |> attr_list()
+      |> Enum.filter(&non_h_type?/1)
 
     props = gen_prop(child, classes, item, p, doc, url)
 
@@ -56,6 +51,12 @@ defmodule Microformats2.Items do
         else: parse_sub(child_children, doc, url, props)
 
     parse_sub(children, doc, url, n_item)
+  end
+
+  defp maybe_parse_prop(type, child, doc, url) do
+    if valid_mf2_name?(type),
+      do: parse_prop(type, child, doc, url),
+      else: nil
   end
 
   defp parse_prop("p-" <> _, child, _, _) do
@@ -165,15 +166,12 @@ defmodule Microformats2.Items do
     props =
       Enum.reduce(classes, item[:properties], fn class, acc ->
         prop =
-          if is_rootlevel?(child) do
-            Map.put(p, :value, get_value(class, p))
-          else
-            parse_prop(class, child, doc, url)
-          end
+          if is_rootlevel?(child),
+            do: Map.put(p, :value, get_value(class, p)),
+            else: maybe_parse_prop(class, child, doc, url)
 
         key = strip_prefix(class) |> to_key |> normalized_key()
-        val = if acc[key] != nil, do: acc[key], else: []
-        Map.put(acc, key, val ++ [prop])
+        Map.update(acc, key, [prop], &(&1 ++ [prop]))
       end)
 
     if blank?(classes) and present?(p) and is_rootlevel?(child),

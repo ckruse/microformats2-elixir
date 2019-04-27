@@ -33,11 +33,11 @@ defmodule Microformats2.Helpers do
   end
 
   @spec is_a?(any(), any()) :: boolean()
-  def is_a?("h-" <> _, wanted), do: wanted == "h"
-  def is_a?("p-" <> _, wanted), do: wanted == "p"
-  def is_a?("e-" <> _, wanted), do: wanted == "e"
-  def is_a?("u-" <> _, wanted), do: wanted == "u"
-  def is_a?("dt-" <> _, wanted), do: wanted == "dt"
+  def is_a?("h-" <> _ = type, wanted), do: wanted == "h" && valid_mf2_name?(type)
+  def is_a?("p-" <> _ = type, wanted), do: wanted == "p" && valid_mf2_name?(type)
+  def is_a?("e-" <> _ = type, wanted), do: wanted == "e" && valid_mf2_name?(type)
+  def is_a?("u-" <> _ = type, wanted), do: wanted == "u" && valid_mf2_name?(type)
+  def is_a?("dt-" <> _ = type, wanted), do: wanted == "dt" && valid_mf2_name?(type)
   def is_a?(_, _), do: false
 
   @spec has_a?(String.t() | [any()] | tuple(), any()) :: boolean()
@@ -90,4 +90,14 @@ defmodule Microformats2.Helpers do
       do: String.to_atom(key),
       else: key
   end
+
+  @spec valid_mf2_name?(String.t()) :: boolean()
+  def valid_mf2_name?(name), do: name =~ ~r/^(?:h|p|e|u|dt)(?:-[a-z0-9]+)?(?:-[a-z]+)+$/
+
+  @spec non_h_type?(String.t()) :: boolean()
+  def non_h_type?("p-" <> _ = type), do: valid_mf2_name?(type)
+  def non_h_type?("u-" <> _ = type), do: valid_mf2_name?(type)
+  def non_h_type?("dt-" <> _ = type), do: valid_mf2_name?(type)
+  def non_h_type?("e-" <> _ = type), do: valid_mf2_name?(type)
+  def non_h_type?(_), do: false
 end
