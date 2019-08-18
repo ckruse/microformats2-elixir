@@ -1,11 +1,13 @@
 defmodule Microformats2 do
-  def parse(url) do
-    response = HTTPotion.get(url, follow_redirects: true)
+  if Code.ensure_loaded?(HTTPotion) do
+    def parse(url) do
+      response = HTTPotion.get(url, follow_redirects: true)
 
-    if HTTPotion.Response.success?(response) do
-      parse(response.body, url)
-    else
-      :error
+      if HTTPotion.Response.success?(response) do
+        parse(response.body, url)
+      else
+        :error
+      end
     end
   end
 

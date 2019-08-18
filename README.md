@@ -12,11 +12,17 @@ This parser is [available in Hex](https://hex.pm/packages/microformats2):
            [{:microformats2, "~> 0.2.0"}]
          end
 
+  2. If you want to directly `parse` from URLs, add httpotion to your list of dependencies in `mix.exs`:
+
+         def deps do
+           [{:microformats2, "~> 0.2.0"},
+            {:httpotion, "~> 3.1"}]
+         end
 
 
 ## Usage
 
-Give the parser an HTML string:
+Give the parser an HTML string and the URL it was fetched from:
 
     Microformats2.parse("""<div class="h-card">
       <img class="u-photo" alt="photo of Mitchell"
@@ -31,7 +37,7 @@ Give the parser an HTML string:
       <span class="p-category">Strategy</span>
       <span class="p-category">Leadership</span>
     </div>
-    """)
+    """, "http://localhost")
 
 It will parse the object to a structure like that:
 
@@ -49,7 +55,11 @@ It will parse the object to a structure like that:
 
 You can also provide HTML trees already parsed with Floki:
 
-    Microformats2.parse(Floki.parse("""<div class="h-card">...</div>"""))
+    Microformats2.parse(Floki.parse("""<div class="h-card">...</div>"""), "http://localhost")
+
+Or URLs if you have HTTPotion installed:
+
+    Microformats2.parse("http://localhost")
 
 ## Dependencies
 
