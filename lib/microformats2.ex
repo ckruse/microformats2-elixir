@@ -11,7 +11,12 @@ defmodule Microformats2 do
     end
   end
 
-  def parse(content, url) when is_binary(content), do: parse(Floki.parse(content), url)
+  def parse(content, url) when is_binary(content) do
+    case Floki.parse_document(content) do
+      {:ok, doc} -> parse(doc, url)
+      _ -> :error
+    end
+  end
 
   def parse(content, url) do
     doc =
