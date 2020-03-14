@@ -1,10 +1,11 @@
 defmodule Microformats2 do
   if Code.ensure_loaded?(Tesla) do
-    plug Tesla.Middleware.FollowRedirects, max_redirects: 3 # defaults to 5
+    use Tesla
+    plug(Tesla.Middleware.FollowRedirects, max_redirects: 3)
+
     def parse(url) do
-      {status, response} = Tesla.get(url)
-      case status do
-        :ok -> parse(response.body, url)
+      case get(url) do
+        {:ok, response} -> parse(response.body, url)
         _ -> :error
       end
     end
