@@ -1,12 +1,11 @@
 defmodule Microformats2 do
-  if Code.ensure_loaded?(HTTPotion) do
+  if Code.ensure_loaded?(Tesla) do
+    plug Tesla.Middleware.FollowRedirects, max_redirects: 3 # defaults to 5
     def parse(url) do
-      response = HTTPotion.get(url, follow_redirects: true)
-
-      if HTTPotion.Response.success?(response) do
-        parse(response.body, url)
-      else
-        :error
+      {status, response} = Tesla.get(url)
+      case status do
+        :ok -> parse(response.body, url)
+        _ -> :error
       end
     end
   end

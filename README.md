@@ -12,11 +12,11 @@ This parser is [available in Hex](https://hex.pm/packages/microformats2):
            [{:microformats2, "~> 0.2.0"}]
          end
 
-  2. If you want to directly `parse` from URLs, add httpotion to your list of dependencies in `mix.exs`:
+  2. If you want to directly `parse` from URLs, add tesla to your list of dependencies in `mix.exs`:
 
          def deps do
            [{:microformats2, "~> 0.2.0"},
-            {:httpotion, "~> 3.1"}]
+            {:tesla, "~> 1.3.0"}]
          end
 
 
@@ -57,14 +57,14 @@ You can also provide HTML trees already parsed with Floki:
 
     Microformats2.parse(Floki.parse("""<div class="h-card">...</div>"""), "http://localhost")
 
-Or URLs if you have HTTPotion installed:
+Or URLs if you have Tesla installed:
 
     Microformats2.parse("http://localhost")
 
 ## Dependencies
 
 We need [Floki](https://github.com/philss/floki) for HTML parsing and
-[HTTPotion](https://github.com/myfreeweb/httpotion) for fetching URLs.
+[Tesla](https://github.com/teamon/tesla) for fetching URLs.
 
 ## Features
 
