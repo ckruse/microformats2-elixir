@@ -654,10 +654,10 @@ defmodule Microformats2ItemsTest do
                            "http://localhost:9000/koype-dev/photos/floating/original_self-portrait.jpgJacky Alciné"
                          ],
                          photo: ["http://localhost:9000/koype-dev/photos/floating/original_self-portrait.jpg"],
-                         url: ["http://localhost/"]
+                         url: ["http://localhost:9000/"]
                        },
                        type: ["h-card"],
-                       value: "http://localhost/"
+                       value: "http://localhost:9000/"
                      }
                    ],
                    like_of: [
@@ -673,16 +673,15 @@ defmodule Microformats2ItemsTest do
                    name: ["LikedLiked\n            67efebc0.ngrok.io"],
                    published: ["2018-12-19T00:19:04.410503Z"],
                    summary: ["LikedLiked\n            67efebc0.ngrok.io"],
-                   uid: ["http://localhost/post/a4ab5c98-c476-4800-9f09-2f7f5a337f32"],
+                   uid: ["http://localhost:9000/post/a4ab5c98-c476-4800-9f09-2f7f5a337f32"],
                    updated: ["2018-12-19 00:19:04.406330"],
-                   url: ["http://localhost/post/a4ab5c98-c476-4800-9f09-2f7f5a337f32"]
+                   url: ["http://localhost:9000/post/a4ab5c98-c476-4800-9f09-2f7f5a337f32"]
                  },
                  type: ["h-entry"]
                }
              ],
-             rel_urls: %{"http://localhost/" => %{rels: ["me"], text: "Jacky Alciné"}},
-             rels: %{"me" => ["http://localhost/"]}
-           } =
-             Microformats2.parse(str, "http://localhost")
+             rel_urls: %{"http://localhost:9000/" => %{rels: ["me"], text: "Jacky Alciné"}},
+             rels: %{"me" => ["http://localhost:9000/"]}
+           } = Microformats2.parse(str, "http://localhost:9000")
   end
 end
