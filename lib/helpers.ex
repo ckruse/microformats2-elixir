@@ -79,13 +79,6 @@ defmodule Microformats2.Helpers do
     end
   end
 
-  @spec to_key(String.t()) :: String.t()
-  def to_key(str) do
-    if Application.get_env(:microformats2, :underscore_keys, true),
-      do: String.replace(str, ~r/[-]/, "_"),
-      else: str
-  end
-
   @spec normalized_key(String.t()) :: String.t() | atom()
   def normalized_key(key) do
     if Application.get_env(:microformats2, :atomize_keys, true),

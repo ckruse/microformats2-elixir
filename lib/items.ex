@@ -141,17 +141,14 @@ defmodule Microformats2.Items do
   defp parse_prop(_, _, _, _), do: nil
 
   defp get_value(class, p) do
-    name_key = normalized_key("name")
-    url_key = normalized_key("url")
-
     cond do
-      is_a?(class, "p") and p[:properties][name_key] != nil ->
-        List.first(p[:properties][name_key])
+      is_a?(class, "p") and p[:properties]["name"] != nil ->
+        List.first(p[:properties]["name"])
 
-      is_a?(class, "u") and p[:properties][url_key] != nil ->
-        List.first(p[:properties][url_key])
+      is_a?(class, "u") and p[:properties]["url"] != nil ->
+        List.first(p[:properties]["url"])
 
-      # and p[:properties][url_key] != nil ->
+      # and p[:properties]["url"] != nil ->
       is_a?(class, "e") ->
         # TODO handle
         nil
@@ -170,7 +167,7 @@ defmodule Microformats2.Items do
             do: Map.put(p, :value, get_value(class, p)),
             else: maybe_parse_prop(class, child, doc, url)
 
-        key = strip_prefix(class) |> to_key |> normalized_key()
+        key = strip_prefix(class)
         Map.update(acc, key, [prop], &(&1 ++ [prop]))
       end)
 
