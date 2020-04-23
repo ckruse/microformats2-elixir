@@ -6,19 +6,18 @@ A [Microformats2](http://microformats.org/wiki/microformats-2) parser for Elixir
 
 This parser is [available in Hex](https://hex.pm/packages/microformats2):
 
-  1. Add microformats2 to your list of dependencies in `mix.exs`:
+1. Add microformats2 to your list of dependencies in `mix.exs`:
 
-         def deps do
-           [{:microformats2, "~> 0.2.0"}]
-         end
+   def deps do
+   [{:microformats2, "~> 0.3.1"}]
+   end
 
-  2. If you want to directly `parse` from URLs, add tesla to your list of dependencies in `mix.exs`:
+2. If you want to directly `parse` from URLs, add tesla to your list of dependencies in `mix.exs`:
 
-         def deps do
-           [{:microformats2, "~> 0.2.0"},
-            {:tesla, "~> 1.3.0"}]
-         end
-
+   def deps do
+   [{:microformats2, "~> 0.3.1"},
+   {:tesla, "~> 1.3.0"}]
+   end
 
 ## Usage
 
@@ -81,7 +80,7 @@ Implemented:
 - dynamic creation of properties
 - [rel](http://microformats.org/wiki/rel)
 - nested microformat without associated property
-- [normalize u-* property values](http://microformats.org/wiki/microformats2-parsing-faq#normalizing_u-.2A_property_values)
+- [normalize u-\* property values](http://microformats.org/wiki/microformats2-parsing-faq#normalizing_u-.2A_property_values)
 
 Not implemented:
 
