@@ -59,7 +59,7 @@ defmodule Microformats2.Helpers do
         url
 
       # protocol relative URI
-      blank?(parsed.scheme) and present?(parsed.host) ->
+      blank?(parsed.scheme) and present?(parsed.authority) ->
         URI.to_string(%{parsed | scheme: parsed_base.scheme})
 
       true ->
@@ -75,7 +75,7 @@ defmodule Microformats2.Helpers do
         parsed_new_base = URI.parse(new_base)
         new_path = Path.expand(parsed.path || "/", Path.dirname(parsed_new_base.path || "/"))
 
-        URI.to_string(%{parsed | scheme: parsed_new_base.scheme, host: parsed_new_base.host, path: new_path})
+        URI.to_string(%{parsed | scheme: parsed_new_base.scheme, authority: parsed_new_base.authority, path: new_path})
     end
   end
 
