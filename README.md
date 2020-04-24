@@ -8,16 +8,20 @@ This parser is [available in Hex](https://hex.pm/packages/microformats2):
 
 1. Add microformats2 to your list of dependencies in `mix.exs`:
 
+   ```
    def deps do
-   [{:microformats2, "~> 0.3.1"}]
+     [{:microformats2, "~> 0.3.1"}]
    end
+   ```
 
-2. If you want to directly `parse` from URLs, add tesla to your list of dependencies in `mix.exs`:
+2. If you want to directly `parse` from URLs, add `tesla` to your list of dependencies in `mix.exs`:
 
+   ```
    def deps do
-   [{:microformats2, "~> 0.3.1"},
-   {:tesla, "~> 1.3.0"}]
+     [{:microformats2, "~> 0.3.1"},
+      {:tesla, "~> 1.3.0"}]
    end
+   ```
 
 ## Usage
 
