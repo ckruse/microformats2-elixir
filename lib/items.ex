@@ -17,8 +17,9 @@ defmodule Microformats2.Items do
     {_, _, children} = root
 
     if not Enum.empty?(root_classes) do
+      base = Map.new |> Map.put(normalized_key("type"), root_classes) |> Map.put(normalized_key("properties"), %{})
       entry =
-        parse_sub(children, doc, url, %{type: root_classes, properties: %{}})
+        parse_sub(children, doc, url, base)
         |> ImpliedProperties.parse(root, url, doc)
 
       items ++ [entry]
@@ -43,7 +44,7 @@ defmodule Microformats2.Items do
       |> attr_list()
       |> Enum.filter(&non_h_type?/1)
 
-    props = gen_prop(child, classes, item, p, doc, url)
+    props = gen_prop(child, classes, item, normalized_key(p), doc, url)
 
     n_item =
       if is_rootlevel?(child),
@@ -132,21 +133,20 @@ defmodule Microformats2.Items do
   end
 
   defp parse_prop("e-" <> _, child = {_, _, children}, _, _) do
-    %{
-      html: stripped_or_nil(Floki.raw_html(children)),
-      text: stripped_or_nil(Floki.text(child))
-    }
+    Map.new
+    |> Map.put(normalized_key("html"), stripped_or_nil(Floki.raw_html(children)))
+    |> Map.put(normalized_key("text"), stripped_or_nil(Floki.text(child)))
   end
 
   defp parse_prop(_, _, _, _), do: nil
 
   defp get_value(class, p) do
     cond do
-      is_a?(class, "p") and p[:properties]["name"] != nil ->
-        List.first(p[:properties]["name"])
+      is_a?(class, "p") and p[normalized_key("properties")]["name"] != nil ->
+        List.first(p[normalized_key("properties")]["name"])
 
       is_a?(class, "u") and p[:properties]["url"] != nil ->
-        List.first(p[:properties]["url"])
+        List.first(p[normalized_key("properties")]["url"])
 
       # and p[:properties]["url"] != nil ->
       is_a?(class, "e") ->
@@ -161,19 +161,19 @@ defmodule Microformats2.Items do
 
   defp gen_prop(child, classes, item, p, doc, url) do
     props =
-      Enum.reduce(classes, item[:properties], fn class, acc ->
+      Enum.reduce(classes, item[normalized_key("properties")], fn class, acc ->
         prop =
           if is_rootlevel?(child),
-            do: Map.put(p, :value, get_value(class, p)),
+            do: Map.put(p, normalized_key("value"), get_value(class, p)),
             else: maybe_parse_prop(class, child, doc, url)
 
         key = strip_prefix(class)
-        Map.update(acc, key, [prop], &(&1 ++ [prop]))
+        Map.update(acc, normalized_key(key), [prop], &(&1 ++ [prop]))
       end)
 
     if blank?(classes) and present?(p) and is_rootlevel?(child),
-      do: Map.update(item, :children, [p], &(&1 ++ [p])),
-      else: Map.put(item, :properties, props)
+      do: Map.update(item, normalized_key("children"), [p], &(&1 ++ [p])),
+      else: Map.put(item, normalized_key("properties"), props)
   end
 
   defp strip_prefix("p-" <> rest), do: rest

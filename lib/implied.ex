@@ -11,7 +11,7 @@ defmodule Microformats2.Items.ImpliedProperties do
   end
 
   defp implied_url_property(entry, root, doc_url, doc) do
-    if entry[:properties]["url"] == nil do
+    if entry[normalized_key("properties")]["url"] == nil do
       val = implied_url_attrval(root)
 
       url =
@@ -31,7 +31,7 @@ defmodule Microformats2.Items.ImpliedProperties do
   end
 
   defp implied_photo_property(entry, root) do
-    if entry[:properties]["photo"] == nil do
+    if entry[normalized_key("properties")]["photo"] == nil do
       val = implied_photo_attrval(root)
 
       url =
@@ -51,7 +51,7 @@ defmodule Microformats2.Items.ImpliedProperties do
   end
 
   defp implied_name_property(entry, root = {elem, _, _}) do
-    if entry[:properties]["name"] == nil do
+    if entry[normalized_key("properties")][normalized_key("name")] == nil do
       nam =
         cond do
           elem == "img" or elem == "area" ->
@@ -69,7 +69,7 @@ defmodule Microformats2.Items.ImpliedProperties do
         end
         |> stripped_or_nil()
 
-      put_in(entry, [:properties, "name"], [nam])
+      put_in(entry, [normalized_key("properties"), "name"], [nam])
     else
       entry
     end

@@ -643,6 +643,66 @@ defmodule Microformats2ItemsTest do
            } = Microformats2.parse(str, "http://localhost")
   end
 
+  test "normalizes keys into strings" do
+    Application.put_env(:microformats2, :atomize_keys, false)
+
+   {:ok, str} = File.read("./test/documents/real_world_note.html")
+
+    assert %{
+             "rels" => _,
+             "rel_urls" => _,
+             "items" =>[
+               %{
+                 "properties" => %{
+                   "author" => [
+                     %{
+                       "properties" => %{
+                         "name" => ["Jeena"],
+                         "photo" => ["http://localhost/avatar.jpg"],
+                         "url" => ["http://localhost/"]
+                       },
+                       "type" => ["h-card"],
+                       "value" => "Jeena"
+                     }
+                   ],
+                   "comment" => [
+                     %{
+                       "properties" => %{
+                         "author" => [
+                           %{
+                             "properties" => %{
+                               "name" => ["Christian Kruse"],
+                               "photo" => [
+                                 "http://localhost/cache?size=40x40>&url=https%3A%2F%2Fwwwtech.de%2Fimages%2Fchristian-kruse-242470c34a3671da4cab3e3b0d941729.jpg%3Fvsn%3Dd"
+                               ],
+                               "url" => ["https://wwwtech.de/notes/132"]
+                             },
+                             "type" => ["h-card"],
+                             "value" =>"Christian Kruse"
+                           }
+                         ],
+                         "content" => [%{"html" => "Of course he is!", "text" => "Of course he is!"}],
+                         "name" => ["Christian Kruse,\n\t\t        4 days ago\n\t\t        Of course he is!"],
+                         "published" => ["2016-02-19T10:50:17Z"],
+                         "url" => ["https://wwwtech.de/notes/132"]
+                       },
+                       "type" => ["h-cite"],
+                       "value" => "Christian Kruse,\n\t\t        4 days ago\n\t\t        Of course he is!"
+                     }
+                   ],
+                   "content" => [%{"html" => "<p>He&apos;s right, you know?</p>", "text" => "He's right, you know?"}],
+                   "in-reply-to" => ["https://wwwtech.de/pictures/51"],
+                   "name" => ["Note #587"],
+                   "published" => ["2016-02-18T19:33:25Z"],
+                   "updated" => ["2016-02-18T19:33:25Z"],
+                   "url" => ["http://localhost/comments/587"]
+                 },
+                 "type" => ["h-as-note", "h-entry"]
+               }
+             ]
+           } = Microformats2.parse(str, "http://localhost")
+  end
+
   test "invalid attrs" do
     str = File.read!("./test/documents/invalid-attrs.html")
 
