@@ -24,7 +24,7 @@ defmodule Microformats2.Items.ImpliedProperties do
 
       if blank?(url),
         do: entry,
-        else: put_in(entry, [:properties, "url"], [abs_uri(url, doc_url, doc)])
+        else: put_in(entry, [normalized_key("properties"), "url"], [abs_uri(url, doc_url, doc)])
     else
       entry
     end
@@ -44,7 +44,7 @@ defmodule Microformats2.Items.ImpliedProperties do
 
       if blank?(url),
         do: entry,
-        else: put_in(entry, [:properties, "photo"], [url])
+        else: put_in(entry, [normalized_key("properties"), "photo"], [url])
     else
       entry
     end
