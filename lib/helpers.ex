@@ -1,5 +1,5 @@
 defmodule Microformats2.Helpers do
-  @spec attr_list(String.t() | [any()] | tuple(), String.t()) :: [String.t()]
+  @spec attr_list(String.t() | Floki.html_tree(), String.t()) :: [String.t()]
   def attr_list(node, attr \\ "class") do
     node
     |> Floki.attribute(attr)
@@ -23,7 +23,7 @@ defmodule Microformats2.Helpers do
 
   @spec is_rootlevel?(bitstring() | tuple()) :: boolean()
   def is_rootlevel?(node) when is_tuple(node) do
-    node
+    [node]
     |> attr_list("class")
     |> Enum.any?(&is_a?(&1, "h"))
   end
@@ -40,7 +40,7 @@ defmodule Microformats2.Helpers do
   def is_a?("dt-" <> _ = type, wanted), do: wanted == "dt" && valid_mf2_name?(type)
   def is_a?(_, _), do: false
 
-  @spec has_a?(String.t() | [any()] | tuple(), any()) :: boolean()
+  @spec has_a?(String.t() | Floki.html_tree(), any()) :: boolean()
   def has_a?(node, wanted) do
     node
     |> attr_list()

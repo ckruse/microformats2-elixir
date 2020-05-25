@@ -55,10 +55,10 @@ defmodule Microformats2.Items.ImpliedProperties do
       nam =
         cond do
           elem == "img" or elem == "area" ->
-            Floki.attribute(root, "alt") |> List.first()
+            Floki.attribute([root], "alt") |> List.first()
 
           elem == "abbr" ->
-            Floki.attribute(root, "title") |> List.first()
+            Floki.attribute([root], "title") |> List.first()
 
           true ->
             val = implied_name_deep(root)
@@ -96,9 +96,9 @@ defmodule Microformats2.Items.ImpliedProperties do
     end
   end
 
-  defp implied_name_attrval(node = {"img", _, _}), do: Floki.attribute(node, "alt") |> List.first()
-  defp implied_name_attrval(node = {"area", _, _}), do: Floki.attribute(node, "alt") |> List.first()
-  defp implied_name_attrval(node = {"abbr", _, _}), do: Floki.attribute(node, "title") |> List.first()
+  defp implied_name_attrval(node = {"img", _, _}), do: Floki.attribute([node], "alt") |> List.first()
+  defp implied_name_attrval(node = {"area", _, _}), do: Floki.attribute([node], "alt") |> List.first()
+  defp implied_name_attrval(node = {"abbr", _, _}), do: Floki.attribute([node], "title") |> List.first()
   defp implied_name_attrval(_), do: nil
 
   defp implied_photo_deep(root) do
@@ -153,8 +153,8 @@ defmodule Microformats2.Items.ImpliedProperties do
     end
   end
 
-  defp implied_photo_attrval(node = {"img", _, _}), do: Floki.attribute(node, "src") |> List.first()
-  defp implied_photo_attrval(node = {"object", _, _}), do: Floki.attribute(node, "data") |> List.first()
+  defp implied_photo_attrval(node = {"img", _, _}), do: Floki.attribute([node], "src") |> List.first()
+  defp implied_photo_attrval(node = {"object", _, _}), do: Floki.attribute([node], "data") |> List.first()
   defp implied_photo_attrval(_), do: nil
 
   defp direct_not_h_children_with_attr({_, _, children}, name, attr) do
@@ -166,7 +166,7 @@ defmodule Microformats2.Items.ImpliedProperties do
     |> Enum.filter(fn el -> Enum.count(Floki.attribute(el, attr)) > 0 end)
   end
 
-  defp implied_url_attrval(node = {"a", _, _}), do: Floki.attribute(node, "href") |> List.first()
-  defp implied_url_attrval(node = {"area", _, _}), do: Floki.attribute(node, "href") |> List.first()
+  defp implied_url_attrval(node = {"a", _, _}), do: Floki.attribute([node], "href") |> List.first()
+  defp implied_url_attrval(node = {"area", _, _}), do: Floki.attribute([node], "href") |> List.first()
   defp implied_url_attrval(_), do: nil
 end

@@ -8,13 +8,12 @@ defmodule Microformats2.Items do
   def parse([head | tail], doc, url, items), do: parse(tail, doc, url, parse(head, doc, url, items))
   def parse([], _, _, items), do: items
 
-  def parse(root, doc, url, items) do
+  def parse({_, _, children} = root, doc, url, items) do
     root_classes =
-      attr_list(root)
+      [root]
+      |> attr_list()
       |> Enum.filter(&is_rootlevel?/1)
       |> Enum.sort()
-
-    {_, _, children} = root
 
     if not Enum.empty?(root_classes) do
       entry =
@@ -32,14 +31,14 @@ defmodule Microformats2.Items do
 
   defp parse_sub([child = {_, _, child_children} | children], doc, url, item) do
     p =
-      if has_a?(child, "h-") do
+      if has_a?([child], "h-") do
         parse(child, doc, url, []) |> List.first()
       else
         []
       end
 
     classes =
-      child
+      [child]
       |> attr_list()
       |> Enum.filter(&non_h_type?/1)
 
@@ -62,8 +61,8 @@ defmodule Microformats2.Items do
   defp parse_prop("p-" <> _, child, _, _) do
     # TODO value pattern parsing
     {elem, _, _} = child
-    title = Floki.attribute(child, "title") |> List.first()
-    alt = Floki.attribute(child, "alt") |> List.first()
+    title = Floki.attribute([child], "title") |> List.first()
+    alt = Floki.attribute([child], "alt") |> List.first()
 
     cond do
       elem == "abbr" and present?(title) ->
@@ -78,12 +77,12 @@ defmodule Microformats2.Items do
   end
 
   defp parse_prop("u-" <> _, child = {elem, _, _}, doc, url) do
-    href = Floki.attribute(child, "href") |> List.first()
-    src = Floki.attribute(child, "src") |> List.first()
-    data = Floki.attribute(child, "data") |> List.first()
-    poster = Floki.attribute(child, "poster") |> List.first()
-    title = Floki.attribute(child, "title") |> List.first()
-    value = Floki.attribute(child, "value") |> List.first()
+    href = Floki.attribute([child], "href") |> List.first()
+    src = Floki.attribute([child], "src") |> List.first()
+    data = Floki.attribute([child], "data") |> List.first()
+    poster = Floki.attribute([child], "poster") |> List.first()
+    title = Floki.attribute([child], "title") |> List.first()
+    value = Floki.attribute([child], "value") |> List.first()
 
     cond do
       Enum.member?(["a", "area"], elem) and present?(href) ->
@@ -112,9 +111,9 @@ defmodule Microformats2.Items do
   end
 
   defp parse_prop("dt-" <> _, child = {elem, _, _}, _, _) do
-    dt = Floki.attribute(child, "datetime")
-    title = Floki.attribute(child, "title")
-    value = Floki.attribute(child, "value")
+    dt = Floki.attribute([child], "datetime")
+    title = Floki.attribute([child], "title")
+    value = Floki.attribute([child], "value")
 
     cond do
       Enum.member?(["time", "ins", "del"], elem) and present?(dt) ->
@@ -134,7 +133,7 @@ defmodule Microformats2.Items do
   defp parse_prop("e-" <> _, child = {_, _, children}, _, _) do
     %{
       html: stripped_or_nil(Floki.raw_html(children)),
-      text: stripped_or_nil(Floki.text(child))
+      text: stripped_or_nil(Floki.text([child]))
     }
   end
 
@@ -187,12 +186,12 @@ defmodule Microformats2.Items do
   def text_content(child = {elem, _, children}, text) do
     txt =
       if elem == "img" do
-        alt = Floki.attribute(child, "alt")
+        alt = Floki.attribute([child], "alt")
 
         if !blank?(alt) do
           alt
         else
-          Floki.attribute(child, "src")
+          Floki.attribute([child], "src")
         end
         |> List.first()
       else
