@@ -31,7 +31,7 @@ defmodule Microformats2.Items do
 
   defp parse_sub([child = {_, _, child_children} | children], doc, url, item) do
     p =
-      if has_a?([child], "h-") do
+      if has_a?([child], "h") do
         parse(child, doc, url, []) |> List.first()
       else
         []
