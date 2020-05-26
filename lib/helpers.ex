@@ -45,7 +45,7 @@ defmodule Microformats2.Helpers do
     node
     |> attr_list()
     |> Enum.filter(&is_a?(&1, wanted))
-    |> blank?
+    |> present?()
   end
 
   @spec abs_uri(String.t(), String.t(), any()) :: String.t()
