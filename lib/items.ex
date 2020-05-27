@@ -3,12 +3,12 @@ defmodule Microformats2.Items do
 
   alias Microformats2.Items.ImpliedProperties
 
-  def parse(nodes, doc, url, items \\ [])
-  def parse([head | tail], doc, url, items) when is_bitstring(head), do: parse(tail, doc, url, items)
-  def parse([head | tail], doc, url, items), do: parse(tail, doc, url, parse(head, doc, url, items))
-  def parse([], _, _, items), do: items
+  def parse(nodes, doc, url, opts, items \\ [])
+  def parse([head | tail], doc, url, opts, items) when is_bitstring(head), do: parse(tail, doc, url, opts, items)
+  def parse([head | tail], doc, url, opts, items), do: parse(tail, doc, url, opts, parse(head, doc, url, opts, items))
+  def parse([], _, _, _, items), do: items
 
-  def parse({_, _, children} = root, doc, url, items) do
+  def parse({_, _, children} = root, doc, url, opts, items) do
     root_classes =
       [root]
       |> attr_list()
@@ -17,22 +17,27 @@ defmodule Microformats2.Items do
 
     if not Enum.empty?(root_classes) do
       entry =
-        parse_sub(children, doc, url, %{type: root_classes, properties: %{}})
-        |> ImpliedProperties.parse(root, url, doc)
+        parse_sub(children, doc, url, opts, %{
+          normalized_key("type", opts) => root_classes,
+          normalized_key("properties", opts) => %{}
+        })
+        |> ImpliedProperties.parse(root, url, doc, opts)
 
       items ++ [entry]
     else
-      parse(children, doc, url, items)
+      parse(children, doc, url, opts, items)
     end
   end
 
-  defp parse_sub([], _, _, item), do: item
-  defp parse_sub([child | children], doc, url, item) when is_bitstring(child), do: parse_sub(children, doc, url, item)
+  defp parse_sub([], _, _, _, item), do: item
 
-  defp parse_sub([child = {_, _, child_children} | children], doc, url, item) do
+  defp parse_sub([child | children], doc, url, opts, item) when is_bitstring(child),
+    do: parse_sub(children, doc, url, opts, item)
+
+  defp parse_sub([child = {_, _, child_children} | children], doc, url, opts, item) do
     p =
       if has_a?([child], "h") do
-        parse(child, doc, url, []) |> List.first()
+        parse(child, doc, url, opts, []) |> List.first()
       else
         []
       end
@@ -42,23 +47,23 @@ defmodule Microformats2.Items do
       |> attr_list()
       |> Enum.filter(&non_h_type?/1)
 
-    props = gen_prop(child, classes, item, p, doc, url)
+    props = gen_prop(child, classes, item, p, doc, url, opts)
 
     n_item =
       if is_rootlevel?(child),
         do: props,
-        else: parse_sub(child_children, doc, url, props)
+        else: parse_sub(child_children, doc, url, opts, props)
 
-    parse_sub(children, doc, url, n_item)
+    parse_sub(children, doc, url, opts, n_item)
   end
 
-  defp maybe_parse_prop(type, child, doc, url) do
+  defp maybe_parse_prop(type, child, doc, url, opts) do
     if valid_mf2_name?(type),
-      do: parse_prop(type, child, doc, url),
+      do: parse_prop(type, child, doc, url, opts),
       else: nil
   end
 
-  defp parse_prop("p-" <> _, child, _, _) do
+  defp parse_prop("p-" <> _, child, _, _, _) do
     # TODO value pattern parsing
     {elem, _, _} = child
     title = Floki.attribute([child], "title") |> List.first()
@@ -76,7 +81,7 @@ defmodule Microformats2.Items do
     end
   end
 
-  defp parse_prop("u-" <> _, child = {elem, _, _}, doc, url) do
+  defp parse_prop("u-" <> _, child = {elem, _, _}, doc, url, _) do
     href = Floki.attribute([child], "href") |> List.first()
     src = Floki.attribute([child], "src") |> List.first()
     data = Floki.attribute([child], "data") |> List.first()
@@ -110,7 +115,7 @@ defmodule Microformats2.Items do
     |> abs_uri(url, doc)
   end
 
-  defp parse_prop("dt-" <> _, child = {elem, _, _}, _, _) do
+  defp parse_prop("dt-" <> _, child = {elem, _, _}, _, _, _) do
     dt = Floki.attribute([child], "datetime")
     title = Floki.attribute([child], "title")
     value = Floki.attribute([child], "value")
@@ -130,22 +135,22 @@ defmodule Microformats2.Items do
     end
   end
 
-  defp parse_prop("e-" <> _, child = {_, _, children}, _, _) do
+  defp parse_prop("e-" <> _, child = {_, _, children}, _, _, opts) do
     %{
-      html: stripped_or_nil(Floki.raw_html(children)),
-      text: stripped_or_nil(Floki.text([child]))
+      normalized_key("html", opts) => stripped_or_nil(Floki.raw_html(children)),
+      normalized_key("text", opts) => stripped_or_nil(Floki.text([child]))
     }
   end
 
-  defp parse_prop(_, _, _, _), do: nil
+  defp parse_prop(_, _, _, _, _), do: nil
 
-  defp get_value(class, p) do
+  defp get_value(class, p, opts) do
     cond do
-      is_a?(class, "p") and p[:properties]["name"] != nil ->
-        List.first(p[:properties]["name"])
+      is_a?(class, "p") and p[normalized_key("properties", opts)][normalized_key("name", opts)] != nil ->
+        List.first(p[normalized_key("properties", opts)][normalized_key("name", opts)])
 
-      is_a?(class, "u") and p[:properties]["url"] != nil ->
-        List.first(p[:properties]["url"])
+      is_a?(class, "u") and p[normalized_key("properties", opts)][normalized_key("url", opts)] != nil ->
+        List.first(p[normalized_key("properties", opts)][normalized_key("url", opts)])
 
       # and p[:properties]["url"] != nil ->
       is_a?(class, "e") ->
@@ -158,21 +163,21 @@ defmodule Microformats2.Items do
     end
   end
 
-  defp gen_prop(child, classes, item, p, doc, url) do
+  defp gen_prop(child, classes, item, p, doc, url, opts) do
     props =
-      Enum.reduce(classes, item[:properties], fn class, acc ->
+      Enum.reduce(classes, item[normalized_key("properties", opts)], fn class, acc ->
         prop =
           if is_rootlevel?(child),
-            do: Map.put(p, :value, get_value(class, p)),
-            else: maybe_parse_prop(class, child, doc, url)
+            do: Map.put(p, normalized_key("value", opts), get_value(class, p, opts)),
+            else: maybe_parse_prop(class, child, doc, url, opts)
 
-        key = strip_prefix(class)
+        key = normalized_key(strip_prefix(class), opts)
         Map.update(acc, key, [prop], &(&1 ++ [prop]))
       end)
 
     if blank?(classes) and present?(p) and is_rootlevel?(child),
-      do: Map.update(item, :children, [p], &(&1 ++ [p])),
-      else: Map.put(item, :properties, props)
+      do: Map.update(item, normalized_key("children", opts), [p], &(&1 ++ [p])),
+      else: Map.put(item, normalized_key("properties", opts), props)
   end
 
   defp strip_prefix("p-" <> rest), do: rest

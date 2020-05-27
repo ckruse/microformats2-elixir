@@ -3,15 +3,15 @@ defmodule Microformats2.Items.ImpliedProperties do
 
   alias Microformats2.Items
 
-  def parse(entry, root, url, doc) do
+  def parse(entry, root, url, doc, opts) do
     entry
-    |> implied_name_property(root)
-    |> implied_photo_property(root)
-    |> implied_url_property(root, url, doc)
+    |> implied_name_property(root, opts)
+    |> implied_photo_property(root, opts)
+    |> implied_url_property(root, url, doc, opts)
   end
 
-  defp implied_url_property(entry, root, doc_url, doc) do
-    if entry[:properties]["url"] == nil do
+  defp implied_url_property(entry, root, doc_url, doc, opts) do
+    if entry[normalized_key("properties", opts)][normalized_key("url", opts)] == nil do
       val = implied_url_attrval(root)
 
       url =
@@ -22,16 +22,18 @@ defmodule Microformats2.Items.ImpliedProperties do
         end
         |> stripped_or_nil()
 
-      if blank?(url),
-        do: entry,
-        else: put_in(entry, [:properties, "url"], [abs_uri(url, doc_url, doc)])
+      if blank?(url) do
+        entry
+      else
+        put_in(entry, [normalized_key("properties", opts), normalized_key("url", opts)], [abs_uri(url, doc_url, doc)])
+      end
     else
       entry
     end
   end
 
-  defp implied_photo_property(entry, root) do
-    if entry[:properties]["photo"] == nil do
+  defp implied_photo_property(entry, root, opts) do
+    if entry[normalized_key("properties", opts)][normalized_key("photo", opts)] == nil do
       val = implied_photo_attrval(root)
 
       url =
@@ -44,14 +46,14 @@ defmodule Microformats2.Items.ImpliedProperties do
 
       if blank?(url),
         do: entry,
-        else: put_in(entry, [:properties, "photo"], [url])
+        else: put_in(entry, [normalized_key("properties", opts), normalized_key("photo", opts)], [url])
     else
       entry
     end
   end
 
-  defp implied_name_property(entry, root = {elem, _, _}) do
-    if entry[:properties]["name"] == nil do
+  defp implied_name_property(entry, root = {elem, _, _}, opts) do
+    if entry[normalized_key("properties", opts)][normalized_key("name", opts)] == nil do
       nam =
         cond do
           elem == "img" or elem == "area" ->
@@ -69,7 +71,7 @@ defmodule Microformats2.Items.ImpliedProperties do
         end
         |> stripped_or_nil()
 
-      put_in(entry, [:properties, "name"], [nam])
+      put_in(entry, [normalized_key("properties", opts), normalized_key("name", opts)], [nam])
     else
       entry
     end

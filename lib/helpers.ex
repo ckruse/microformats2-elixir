@@ -79,9 +79,9 @@ defmodule Microformats2.Helpers do
     end
   end
 
-  @spec normalized_key(String.t()) :: String.t() | atom()
-  def normalized_key(key) do
-    if Application.get_env(:microformats2, :atomize_keys, true),
+  @spec normalized_key(String.t(), keyword()) :: String.t() | atom()
+  def normalized_key(key, opts) do
+    if Keyword.get(opts, :atomize_keys, true),
       do: String.to_atom(key),
       else: key
   end

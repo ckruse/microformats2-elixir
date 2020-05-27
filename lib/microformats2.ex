@@ -1,24 +1,31 @@
 defmodule Microformats2 do
+  alias Microformats2.Helpers
+
   if Code.ensure_loaded?(Tesla) do
     use Tesla
     plug(Tesla.Middleware.FollowRedirects, max_redirects: 3)
 
-    def parse(url) do
+    @type t :: %{items: any, rel_urls: any, rels: any}
+
+    @spec parse(String.t() | Floki.html_tree(), String.t() | keyword(), keyword()) :: :error | t()
+    def parse(content_or_url, base_url_or_opts \\ [], opts \\ [])
+
+    def parse(url, opts, _) when is_list(opts) do
       case get(url) do
-        {:ok, response} -> parse(response.body, url)
+        {:ok, response} -> parse(response.body, url, opts)
         _ -> :error
       end
     end
   end
 
-  def parse(content, url) when is_binary(content) do
+  def parse(content, url, opts) when is_binary(content) do
     case Floki.parse_document(content) do
-      {:ok, doc} -> parse(doc, url)
+      {:ok, doc} -> parse(doc, url, opts)
       _ -> :error
     end
   end
 
-  def parse(content, url) do
+  def parse(content, url, opts) do
     doc =
       content
       |> Floki.filter_out("template")
@@ -26,9 +33,13 @@ defmodule Microformats2 do
       |> Floki.filter_out("script")
       |> Floki.filter_out(:comment)
 
-    rels = Microformats2.Rels.parse(doc, url)
-    items = Microformats2.Items.parse(doc, doc, url)
+    rels = Microformats2.Rels.parse(doc, url, opts)
+    items = Microformats2.Items.parse(doc, doc, url, opts)
 
-    %{items: items, rels: rels[:rels], rel_urls: rels[:rel_urls]}
+    %{
+      Helpers.normalized_key("items", opts) => items,
+      Helpers.normalized_key("rels", opts) => rels[Helpers.normalized_key("rels", opts)],
+      Helpers.normalized_key("rel_urls", opts) => rels[Helpers.normalized_key("rel_urls", opts)]
+    }
   end
 end
