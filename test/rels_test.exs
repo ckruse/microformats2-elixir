@@ -1,6 +1,5 @@
-defmodule Microformats2RelsTest do
+defmodule Microformats2.RelsTest do
   use ExUnit.Case
-  doctest Microformats2.Rels
 
   test "parse successfully parses rels" do
     assert(

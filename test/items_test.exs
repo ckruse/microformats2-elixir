@@ -1,6 +1,5 @@
-defmodule Microformats2ItemsTest do
+defmodule Microformats2.ItemsTest do
   use ExUnit.Case
-  doctest Microformats2.Items
 
   test "successfully parses a whole document" do
     str = """
