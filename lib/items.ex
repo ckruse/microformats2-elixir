@@ -16,17 +16,26 @@ defmodule Microformats2.Items do
       |> Enum.sort()
 
     if not Enum.empty?(root_classes) do
+      item =
+        %{normalized_key("type", opts) => root_classes, normalized_key("properties", opts) => %{}}
+        |> maybe_put_id(root, opts)
+
       entry =
-        parse_sub(children, doc, url, opts, %{
-          normalized_key("type", opts) => root_classes,
-          normalized_key("properties", opts) => %{}
-        })
+        parse_sub(children, doc, url, opts, item)
         |> ImpliedProperties.parse(root, url, doc, opts)
 
       items ++ [entry]
     else
       parse(children, doc, url, opts, items)
     end
+  end
+
+  defp maybe_put_id(item, root, opts) do
+    id = Floki.attribute([root], "id")
+
+    if present?(id),
+      do: Map.put(item, normalized_key("id", opts), id),
+      else: item
   end
 
   defp parse_sub([], _, _, _, item), do: item
