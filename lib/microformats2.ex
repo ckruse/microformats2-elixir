@@ -5,7 +5,7 @@ defmodule Microformats2 do
     use Tesla
     plug(Tesla.Middleware.FollowRedirects, max_redirects: 3)
 
-    @type t :: %{items: any, rel_urls: any, rels: any}
+    @type t :: map()
 
     @spec parse(String.t() | Floki.html_tree(), String.t() | keyword(), keyword()) :: :error | t()
     def parse(content_or_url, base_url_or_opts \\ [], opts \\ [])
@@ -39,7 +39,7 @@ defmodule Microformats2 do
     %{
       Helpers.normalized_key("items", opts) => items,
       Helpers.normalized_key("rels", opts) => rels[Helpers.normalized_key("rels", opts)],
-      Helpers.normalized_key("rel_urls", opts) => rels[Helpers.normalized_key("rel_urls", opts)]
+      Helpers.normalized_key("rel-urls", opts) => rels[Helpers.normalized_key("rel-urls", opts)]
     }
   end
 end
