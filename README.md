@@ -23,6 +23,23 @@ This parser is [available in Hex](https://hex.pm/packages/microformats2):
    end
    ```
 
+3. I recommend [html5ever](https://hex.pm/packages/html5ever) for parsing since the modified mochiweb parser
+   distributed by Floki is a bit buggy sometimes, especially with whitespaces. To do so add `html5ever` to your
+   list of dependencies in `mix.exs`:
+
+   ```
+   def deps do
+     [{:microformats2, "~> 0.3.1"},
+      {:html5ever, "~> 0.8.0"}]
+   end
+   ```
+
+   After that configure Floki to use `html5ever` in your `config.exs`:
+
+   ```
+   config :floki, :html_parser, Floki.HTMLParser.Html5ever
+   ```
+
 ## Usage
 
 Give the parser an HTML string and the URL it was fetched from:
