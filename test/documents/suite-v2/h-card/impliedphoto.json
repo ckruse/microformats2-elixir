@@ -1,0 +1,102 @@
+  {
+    "items": [{
+        "type": ["h-card"],
+        "properties": {
+            "name": ["Jane Doe"],
+            "photo": [
+                {
+                    "alt": "Jane Doe",
+                    "value": "http://example.com/jane.jpeg"
+                }
+            ]
+        }
+    },
+    {
+        "type": ["h-card"],
+        "properties": {
+            "name": ["Jane Doe"],
+            "photo": ["http://example.com/jane.jpeg"]
+        }
+    },
+    {
+        "type": ["h-card"],
+        "properties": {
+            "name": ["Jane Doe"],
+            "photo": [
+                {
+                    "alt": "Jane Doe",
+                    "value": "http://example.com/jane.jpeg"
+                }
+            ]
+        }
+    },
+    {
+        "type": ["h-card"],
+        "properties": {
+            "name": ["Jane Doe"],
+            "photo": ["http://example.com/jane.jpeg"]
+        }
+    },
+    {
+        "type": ["h-card"],
+        "properties": {
+            "name": ["Jane Doe"],
+            "photo": [
+                {
+                    "alt": "Jane Doe",
+                    "value": "http://example.com/jane.jpeg"
+                }
+            ]
+        }
+    },
+    {
+        "type": ["h-card"],
+        "properties": {
+            "name": ["Jane Doe"],
+            "photo": ["http://example.com/jane.jpeg"]
+        }
+    },
+    {
+        "type": ["h-card"],
+        "properties": {},
+        "children": [{
+            "type": ["h-card"],
+            "properties": {
+                "name": ["Jane Doe"],
+                "photo": [
+                    {
+                        "alt": "Jane Doe",
+                        "value": "http://example.com/jane.jpeg"
+                    }
+                ]
+            }
+        }]
+    },
+    {
+        "type": ["h-card"],
+        "properties": {},
+        "children": [{
+            "type": ["h-card"],
+            "properties": {
+                "name": ["Jane Doe"],
+                "photo": ["http://example.com/jane.jpeg"]
+            }
+        }]
+    },
+    {
+        "type": ["h-card"],
+        "properties": {
+            "name": ["John Doe"],
+            "url": ["https://example.com"]
+        }
+    },
+    {
+        "type": ["h-card"],
+        "properties": {
+            "name": ["John Doe"],
+            "url": ["https://example.com"]
+        }
+    }],
+    "rels": {},
+    "rel-urls": {}
+}

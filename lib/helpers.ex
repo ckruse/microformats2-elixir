@@ -1,6 +1,15 @@
 defmodule Microformats2.Helpers do
   @spec attr_list(String.t() | Floki.html_tree(), String.t()) :: [String.t()]
-  def attr_list(node, attr \\ "class") do
+  def attr_list(node, attr \\ "class")
+
+  def attr_list(node, attr) when is_list(node) do
+    node
+    |> Enum.reject(&is_bitstring/1)
+    |> Enum.flat_map(&attr_list(&1, attr))
+    |> Enum.uniq()
+  end
+
+  def attr_list(node, attr) do
     node
     |> Floki.attribute(attr)
     |> List.first()
@@ -48,10 +57,24 @@ defmodule Microformats2.Helpers do
     |> present?()
   end
 
+  defp find_base(url, doc) do
+    base_element = Floki.find(doc, "base")
+
+    if blank?(base_element) || blank?(Floki.attribute(base_element, "href")) do
+      URI.parse(url)
+    else
+      base_element
+      |> Floki.attribute("href")
+      |> List.first()
+      |> abs_uri(url, [])
+      |> URI.parse()
+    end
+  end
+
   @spec abs_uri(String.t(), String.t(), any()) :: String.t()
   def abs_uri(url, base_url, doc) do
     parsed = URI.parse(url)
-    parsed_base = URI.parse(base_url)
+    parsed_base = find_base(base_url, doc)
 
     cond do
       # absolute URI
@@ -59,24 +82,23 @@ defmodule Microformats2.Helpers do
         url
 
       # protocol relative URI
-      blank?(parsed.scheme) and present?(parsed.authority) ->
+      blank?(parsed.scheme) && present?(parsed.authority) ->
         URI.to_string(%{parsed | scheme: parsed_base.scheme})
 
       true ->
-        base_element = Floki.find(doc, "base")
+        new_path =
+          (parsed.path || "")
+          |> Path.expand(parsed_base.path || "/")
+          |> maybe_append_slash(parsed.path || "")
 
-        new_base =
-          if blank?(base_element) or blank?(Floki.attribute(base_element, "href")) do
-            base_url
-          else
-            abs_uri(Floki.attribute(base_element, "href") |> List.first(), base_url, [])
-          end
-
-        parsed_new_base = URI.parse(new_base)
-        new_path = Path.expand(parsed.path || "/", Path.dirname(parsed_new_base.path || "/"))
-
-        URI.to_string(%{parsed | scheme: parsed_new_base.scheme, authority: parsed_new_base.authority, path: new_path})
+        URI.to_string(%{parsed | scheme: parsed_base.scheme, authority: parsed_base.authority, path: new_path})
     end
+  end
+
+  defp maybe_append_slash(new_path, old_path) do
+    if String.ends_with?(old_path, "/"),
+      do: "#{new_path}/",
+      else: new_path
   end
 
   @spec normalized_key(String.t(), keyword()) :: String.t() | atom()
@@ -100,4 +122,46 @@ defmodule Microformats2.Helpers do
   def non_h_type?("dt-" <> _ = type), do: valid_mf2_name?(type)
   def non_h_type?("e-" <> _ = type), do: valid_mf2_name?(type)
   def non_h_type?(_), do: false
+
+  def has_nested?(root) do
+    {_, acc} =
+      Floki.traverse_and_update(root, 0, fn node, acc ->
+        if has_a?(node, "h"),
+          do: {node, acc + 1},
+          else: {node, acc}
+      end)
+
+    acc > 0
+  end
+
+  def cleanup_html(node) do
+    node
+    |> Floki.filter_out("style")
+    |> Floki.filter_out("script")
+  end
+
+  def text_content(child, text \\ "")
+
+  def text_content(children, text) when is_list(children),
+    do: Enum.reduce(children, text, &text_content(&1, &2))
+
+  def text_content(child = {elem, _, children}, text) do
+    txt =
+      if elem == "img" do
+        alt = Floki.attribute([child], "alt")
+
+        if !blank?(alt) do
+          alt
+        else
+          Floki.attribute([child], "src")
+        end
+        |> List.first()
+      else
+        ""
+      end
+
+    Enum.reduce(children, text <> txt, &text_content/2)
+  end
+
+  def text_content(child, text) when is_bitstring(child), do: text <> child
 end

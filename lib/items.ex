@@ -1,7 +1,8 @@
 defmodule Microformats2.Items do
   import Microformats2.Helpers
 
-  alias Microformats2.Items.ImpliedProperties
+  alias Microformats2.Items
+  alias Microformats2.Items.Implied
 
   def parse(nodes, doc, url, opts, items \\ [])
   def parse([head | tail], doc, url, opts, items) when is_bitstring(head), do: parse(tail, doc, url, opts, items)
@@ -22,7 +23,7 @@ defmodule Microformats2.Items do
 
       entry =
         parse_sub(children, doc, url, opts, item)
-        |> ImpliedProperties.parse(root, url, doc, opts)
+        |> Implied.parse(root, url, doc, opts)
 
       items ++ [entry]
     else
@@ -31,7 +32,7 @@ defmodule Microformats2.Items do
   end
 
   defp maybe_put_id(item, root, opts) do
-    id = Floki.attribute([root], "id")
+    id = Floki.attribute([root], "id") |> List.first()
 
     if present?(id),
       do: Map.put(item, normalized_key("id", opts), id),
@@ -72,82 +73,24 @@ defmodule Microformats2.Items do
       else: nil
   end
 
-  defp parse_prop("p-" <> _, child, _, _, _) do
-    # TODO value pattern parsing
-    {elem, _, _} = child
-    title = Floki.attribute([child], "title") |> List.first()
-    alt = Floki.attribute([child], "alt") |> List.first()
+  defp parse_prop("p-" <> _, child, _, _, _),
+    do: Items.PProp.parsed_prop(child)
 
-    cond do
-      elem == "abbr" and present?(title) ->
-        title
+  defp parse_prop("u-" <> _, child, doc, url, opts),
+    do: Items.UProp.parsed_prop(child, doc, url, opts)
 
-      elem == "img" and present?(alt) ->
-        alt
-
-      true ->
-        text_content(child) |> String.trim()
-    end
-  end
-
-  defp parse_prop("u-" <> _, child = {elem, _, _}, doc, url, _) do
-    href = Floki.attribute([child], "href") |> List.first()
-    src = Floki.attribute([child], "src") |> List.first()
-    data = Floki.attribute([child], "data") |> List.first()
-    poster = Floki.attribute([child], "poster") |> List.first()
-    title = Floki.attribute([child], "title") |> List.first()
-    value = Floki.attribute([child], "value") |> List.first()
-
-    cond do
-      Enum.member?(["a", "area"], elem) and present?(href) ->
-        href
-
-      Enum.member?(["img", "audio", "video", "source"], elem) and present?(src) ->
-        src
-
-      elem == "object" and present?(data) ->
-        data
-
-      elem == "video" and present?(poster) ->
-        poster
-
-      # TODO value-class-pattern at this position
-      elem == "abbr" and present?(title) ->
-        title
-
-      Enum.member?(["data", "input"], elem) and present?(value) ->
-        value
-
-      true ->
-        text_content(child) |> String.trim()
-    end
-    |> abs_uri(url, doc)
-  end
-
-  defp parse_prop("dt-" <> _, child = {elem, _, _}, _, _, _) do
-    dt = Floki.attribute([child], "datetime")
-    title = Floki.attribute([child], "title")
-    value = Floki.attribute([child], "value")
-
-    cond do
-      Enum.member?(["time", "ins", "del"], elem) and present?(dt) ->
-        dt |> List.first()
-
-      elem == "abbr" and present?(title) ->
-        title |> List.first()
-
-      Enum.member?(["data", "input"], elem) and present?(value) ->
-        value |> List.first()
-
-      true ->
-        text_content(child) |> String.trim()
-    end
-  end
+  defp parse_prop("dt-" <> _, child, _, _, _),
+    do: Items.DtProp.parsed_prop(child)
 
   defp parse_prop("e-" <> _, child = {_, _, children}, _, _, opts) do
+    text =
+      [child]
+      |> cleanup_html()
+      |> Floki.text()
+
     %{
       normalized_key("html", opts) => stripped_or_nil(Floki.raw_html(children)),
-      normalized_key("text", opts) => stripped_or_nil(Floki.text([child]))
+      normalized_key("value", opts) => stripped_or_nil(text)
     }
   end
 
@@ -195,25 +138,12 @@ defmodule Microformats2.Items do
   defp strip_prefix("e-" <> rest), do: rest
   defp strip_prefix(rest), do: rest
 
-  def text_content(child, text \\ "")
+  def img_prop(img, url, doc, opts) do
+    alt = Floki.attribute([img], "alt") |> List.first()
+    src = Floki.attribute([img], "src") |> List.first()
 
-  def text_content(child = {elem, _, children}, text) do
-    txt =
-      if elem == "img" do
-        alt = Floki.attribute([child], "alt")
-
-        if !blank?(alt) do
-          alt
-        else
-          Floki.attribute([child], "src")
-        end
-        |> List.first()
-      else
-        ""
-      end
-
-    Enum.reduce(children, text <> txt, &text_content/2)
+    if present?(alt) and present?(src),
+      do: %{normalized_key("alt", opts) => alt, normalized_key("value", opts) => abs_uri(src, url, doc)},
+      else: abs_uri(src, url, doc)
   end
-
-  def text_content(child, text) when is_bitstring(child), do: text <> child
 end

@@ -6,6 +6,7 @@ defmodule Microformats2.Mixfile do
       app: :microformats2,
       version: "0.4.0",
       elixir: "~> 1.6",
+      elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       description: description(),
@@ -13,6 +14,9 @@ defmodule Microformats2.Mixfile do
       deps: deps()
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Configuration for the OTP application
   #
@@ -49,7 +53,9 @@ defmodule Microformats2.Mixfile do
     [
       {:floki, "~> 0.7"},
       {:tesla, "~> 1.3.0", optional: true},
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:html5ever, "~> 0.8.0", only: [:dev, :test]},
+      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:jason, "~> 1.2", only: [:dev, :test]}
     ]
   end
 end

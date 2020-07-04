@@ -29,8 +29,6 @@ defmodule Microformats2 do
     doc =
       content
       |> Floki.filter_out("template")
-      |> Floki.filter_out("style")
-      |> Floki.filter_out("script")
       |> Floki.filter_out(:comment)
 
     rels = Microformats2.Rels.parse(doc, url, opts)
