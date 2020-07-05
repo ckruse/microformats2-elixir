@@ -682,4 +682,30 @@ defmodule Microformats2.ItemsTest do
              ]
            } = Microformats2.parse(str, "http://localhost", atomize_keys: false)
   end
+
+  test "doesn't imply a name" do
+    {:ok, str} = File.read("./test/documents/no_name_implied.html")
+    doc = Microformats2.parse(str, "http://localhost")
+
+    assert %{
+             items: [
+               %{
+                 properties: %{
+                   author: _,
+                   comment: _,
+                   content: _,
+                   in_reply_to: _,
+                   published: _,
+                   uid: _,
+                   url: _
+                 },
+                 type: ["h-entry"]
+               }
+             ],
+             rel_urls: _,
+             rels: _
+           } = doc
+
+    refute Map.get(List.first(doc[:items]), :name)
+  end
 end
