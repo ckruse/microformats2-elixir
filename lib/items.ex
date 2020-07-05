@@ -73,8 +73,8 @@ defmodule Microformats2.Items do
       else: nil
   end
 
-  defp parse_prop("p-" <> _, child, _, _, _),
-    do: Items.PProp.parsed_prop(child)
+  defp parse_prop("p-" <> _, child, doc, url, _),
+    do: Items.PProp.parsed_prop(child, doc, url)
 
   defp parse_prop("u-" <> _, child, doc, url, opts),
     do: Items.UProp.parsed_prop(child, doc, url, opts)
@@ -82,19 +82,34 @@ defmodule Microformats2.Items do
   defp parse_prop("dt-" <> _, child, _, _, _),
     do: Items.DtProp.parsed_prop(child)
 
-  defp parse_prop("e-" <> _, child = {_, _, children}, _, _, opts) do
-    text =
-      [child]
-      |> cleanup_html()
-      |> Floki.text()
+  defp parse_prop("e-" <> _, {_, _, children}, doc, url, opts) do
+    updated_tree =
+      Floki.traverse_and_update(children, fn element ->
+        element
+        |> update_url_attr("href", doc, url)
+        |> update_url_attr("src", doc, url)
+      end)
 
     %{
-      normalized_key("html", opts) => stripped_or_nil(Floki.raw_html(children)),
-      normalized_key("value", opts) => stripped_or_nil(text)
+      normalized_key("html", opts) => updated_tree |> Floki.raw_html() |> stripped_or_nil(),
+      normalized_key("value", opts) =>
+        updated_tree |> cleanup_html() |> text_content(doc, url, &replaced_img_by_alt_or_src/3) |> stripped_or_nil()
     }
   end
 
   defp parse_prop(_, _, _, _, _), do: nil
+
+  defp update_url_attr({element, attributes, children}, attr, doc, doc_url) do
+    updated_attributes =
+      Enum.map(attributes, fn
+        {^attr, uri} -> {attr, abs_uri(uri, doc_url, doc)}
+        v -> v
+      end)
+
+    {element, updated_attributes, children}
+  end
+
+  defp update_url_attr(node, _, _, _), do: node
 
   defp get_value(class, p, opts) do
     cond do

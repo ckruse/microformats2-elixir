@@ -17,7 +17,7 @@ defmodule Microformats2.Items.DtProp do
         value |> List.first()
 
       true ->
-        text_content(child) |> String.trim()
+        [child] |> cleanup_html() |> text_content() |> String.trim()
     end
   end
 end

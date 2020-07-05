@@ -140,28 +140,48 @@ defmodule Microformats2.Helpers do
     |> Floki.filter_out("script")
   end
 
-  def text_content(child, text \\ "")
+  def text_content(tree, image_replacer \\ nil),
+    do: text_content(tree, nil, nil, image_replacer)
 
-  def text_content(children, text) when is_list(children),
-    do: Enum.reduce(children, text, &text_content(&1, &2))
+  def text_content(tree, doc, doc_url, image_replacer \\ nil)
 
-  def text_content(child = {elem, _, children}, text) do
-    txt =
-      if elem == "img" do
-        alt = Floki.attribute([child], "alt")
+  def text_content(tree, doc, doc_url, image_replacer) when not is_list(tree),
+    do: text_content([tree], doc, doc_url, image_replacer)
 
-        if !blank?(alt) do
-          alt
-        else
-          Floki.attribute([child], "src")
-        end
-        |> List.first()
-      else
-        ""
-      end
+  def text_content(tree, doc, doc_url, image_replacer) do
+    Floki.traverse_and_update(tree, fn
+      {"img", _, _} = node ->
+        if image_replacer,
+          do: image_replacer.(node, doc_url, doc),
+          else: node
 
-    Enum.reduce(children, text <> txt, &text_content/2)
+      node ->
+        node
+    end)
+    |> Floki.text()
   end
 
-  def text_content(child, text) when is_bitstring(child), do: text <> child
+  def replaced_img_by_alt_or_src(img, doc_url, doc) do
+    alt = Floki.attribute([img], "alt") |> List.first()
+    src = Floki.attribute([img], "src") |> List.first()
+
+    cond do
+      !is_nil(alt) ->
+        alt
+
+      !is_nil(src) ->
+        " " <> abs_uri(src, doc_url, doc) <> " "
+
+      true ->
+        nil
+    end
+  end
+
+  def replaced_img_by_alt_only(img, _, _) do
+    alt = Floki.attribute([img], "alt") |> List.first()
+
+    if !is_nil(alt),
+      do: alt,
+      else: nil
+  end
 end

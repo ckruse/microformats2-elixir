@@ -13,7 +13,7 @@ defmodule Microformats2.Items.Implied.Name do
         val = implied_name_deep(root)
 
         if blank?(val),
-          do: root |> cleanup_html() |> text_content(),
+          do: [root] |> cleanup_html() |> text_content(&replaced_img_by_alt_only/3),
           else: val
     end
     |> stripped_or_nil()
