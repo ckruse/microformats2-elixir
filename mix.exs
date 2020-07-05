@@ -4,7 +4,7 @@ defmodule Microformats2.Mixfile do
   def project do
     [
       app: :microformats2,
-      version: "0.4.0",
+      version: "0.5.0",
       elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,
