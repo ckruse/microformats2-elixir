@@ -160,8 +160,8 @@ defmodule Microformats2.RelsTest do
     assert(
       %{
         items: _,
-        rel_urls: %{"http://localhost/blah/blub" => %{rels: ["me"], text: "blub"}},
-        rels: %{me: ["http://localhost/blah/blub"]}
+        rel_urls: %{"http://localhost/blah/foo/blub" => %{rels: ["me"], text: "blub"}},
+        rels: %{me: ["http://localhost/blah/foo/blub"]}
       } = Microformats2.parse("<a rel=\"me\" href=\"blub\">blub</a>", "http://localhost/blah/foo")
     )
 

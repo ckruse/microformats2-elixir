@@ -96,7 +96,7 @@ defmodule Microformats2.Helpers do
   end
 
   defp maybe_append_slash(new_path, old_path) do
-    if String.ends_with?(old_path, "/"),
+    if String.ends_with?(old_path, "/") && !String.ends_with?(new_path, "/"),
       do: "#{new_path}/",
       else: new_path
   end
