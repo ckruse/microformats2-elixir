@@ -53,7 +53,6 @@ defmodule Microformats2.Mixfile do
     [
       {:floki, "~> 0.7"},
       {:tesla, "~> 1.3.0", optional: true},
-      {:html5ever, "~> 0.8.0", only: [:dev, :test]},
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:jason, "~> 1.2", only: [:dev, :test]}
     ]

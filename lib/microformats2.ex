@@ -19,7 +19,7 @@ defmodule Microformats2 do
   end
 
   def parse(content, url, opts) when is_binary(content) do
-    case Floki.parse_document(content) do
+    case parsed_document(content) do
       {:ok, doc} -> parse(doc, url, opts)
       _ -> :error
     end
@@ -39,5 +39,25 @@ defmodule Microformats2 do
       Helpers.normalized_key("rels", opts) => rels[Helpers.normalized_key("rels", opts)],
       Helpers.normalized_key("rel-urls", opts) => rels[Helpers.normalized_key("rel-urls", opts)]
     }
+  end
+
+  defp replace_whitespaces(text, last_text \\ "")
+  defp replace_whitespaces(text, last_text) when last_text == text, do: text
+
+  defp replace_whitespaces(text, _) do
+    text
+    |> String.replace(~r/>((&#32;)*) ( *)</, ">\\g{1}&#32;\\g{3}<")
+    |> replace_whitespaces(text)
+  end
+
+  # this is a really ugly hack, but html5ever doesn't support template tags (it fails with a nif_panic),
+  # mochiweb has bugs whith whitespaces and I can't really get fast_html to work
+  defp parsed_document(content) do
+    content
+    |> replace_whitespaces()
+    |> String.replace(~r/\015/, "&#x0D;")
+    |> String.replace(~r/\012/, "&#x0A;")
+    |> String.replace(~r/\013/, "&#x0B;")
+    |> Floki.parse_document()
   end
 end
