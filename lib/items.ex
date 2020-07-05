@@ -73,16 +73,16 @@ defmodule Microformats2.Items do
       else: nil
   end
 
-  defp parse_prop("p-" <> _, child, doc, url, _),
+  def parse_prop("p-" <> _, child, doc, url, _),
     do: Items.PProp.parsed_prop(child, doc, url)
 
-  defp parse_prop("u-" <> _, child, doc, url, opts),
+  def parse_prop("u-" <> _, child, doc, url, opts),
     do: Items.UProp.parsed_prop(child, doc, url, opts)
 
-  defp parse_prop("dt-" <> _, child, _, _, _),
+  def parse_prop("dt-" <> _, child, _, _, _),
     do: Items.DtProp.parsed_prop(child)
 
-  defp parse_prop("e-" <> _, {_, _, children}, doc, url, opts) do
+  def parse_prop("e-" <> _, {_, _, children}, doc, url, opts) do
     updated_tree =
       Floki.traverse_and_update(children, fn element ->
         element
@@ -97,7 +97,7 @@ defmodule Microformats2.Items do
     }
   end
 
-  defp parse_prop(_, _, _, _, _), do: nil
+  def parse_prop(_, _, _, _, _), do: nil
 
   defp update_url_attr({element, attributes, children}, attr, doc, doc_url) do
     updated_attributes =
@@ -111,31 +111,12 @@ defmodule Microformats2.Items do
 
   defp update_url_attr(node, _, _, _), do: node
 
-  defp get_value(class, p, opts) do
-    cond do
-      is_a?(class, "p") and p[normalized_key("properties", opts)][normalized_key("name", opts)] != nil ->
-        List.first(p[normalized_key("properties", opts)][normalized_key("name", opts)])
-
-      is_a?(class, "u") and p[normalized_key("properties", opts)][normalized_key("url", opts)] != nil ->
-        List.first(p[normalized_key("properties", opts)][normalized_key("url", opts)])
-
-      # and p[:properties]["url"] != nil ->
-      is_a?(class, "e") ->
-        # TODO handle
-        nil
-
-      true ->
-        # TODO handle
-        nil
-    end
-  end
-
   defp gen_prop(child, classes, item, p, doc, url, opts) do
     props =
       Enum.reduce(classes, item[normalized_key("properties", opts)], fn class, acc ->
         prop =
           if is_rootlevel?(child),
-            do: Map.put(p, normalized_key("value", opts), get_value(class, p, opts)),
+            do: Map.put(p, normalized_key("value", opts), Items.Value.get_value(class, p, child, doc, url, opts)),
             else: maybe_parse_prop(class, child, doc, url, opts)
 
         key = normalized_key(strip_prefix(class), opts)
