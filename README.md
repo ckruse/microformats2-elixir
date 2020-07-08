@@ -28,7 +28,8 @@ This parser is [available in Hex](https://hex.pm/packages/microformats2):
 Give the parser an HTML string and the URL it was fetched from:
 
 ```elixir
-Microformats2.parse("""<div class="h-card">
+Microformats2.parse("""
+<div class="h-card">
   <img class="u-photo" alt="photo of Mitchell"
         src="https://webfwd.org/content/about-experts/300.mitchellbaker/mentor_mbaker.jpg"/>
   <a class="p-name u-url"
@@ -41,40 +42,47 @@ Microformats2.parse("""<div class="h-card">
   <span class="p-category">Strategy</span>
   <span class="p-category">Leadership</span>
 </div>
-""", "http://localhost")
+""", "http://example.org")
 ```
 
 It will parse the object to a structure like that:
 
 ```elixir
 %{
-  rels: _,
-  rel_urls: _,
   items: [
     %{
-      type: ["h-card"],
       properties: %{
-        "photo" => ["https://webfwd.org/content/about-experts/300.mitchellbaker/mentor_mbaker.jpg"],
-        "name" => ["Mitchell Baker"],
-        "url" => ["http://blog.lizardwrangler.com/", "https://twitter.com/MitchellBaker"],
-        "org" => ["Mozilla Foundation"],
-        "note" => [
-          "Mitchell is responsible for setting the direction and scope of the Mozilla Foundation and its activities."
+        category: ["Strategy", "Leadership"],
+        name: ["Mitchell Baker"],
+        note: ["Mitchell is responsible for setting the direction and scope of the Mozilla Foundation and its activities."],
+        org: ["Mozilla Foundation"],
+        photo: [
+          %{
+            alt: "photo of Mitchell",
+            value: "https://webfwd.org/content/about-experts/300.mitchellbaker/mentor_mbaker.jpg"
+          }
         ],
-        "category" => ["Strategy", "Leadership"]
-      }
+        url: ["http://blog.lizardwrangler.com/", "https://twitter.com/MitchellBaker"]
+      },
+      type: ["h-card"]
     }
-  ]
+  ],
+  rel_urls: %{},
+  rels: %{}
 }
 ```
 
 You can also provide HTML trees already parsed with Floki:
 
-    Microformats2.parse(Floki.parse("""<div class="h-card">...</div>"""), "http://localhost")
+```elixir
+Microformats2.parse(Floki.parse("<div class=\"h-card\">...</div>"), "http://example.org")
+```
 
 Or URLs if you have Tesla installed:
 
-    Microformats2.parse("http://localhost")
+```elixir
+Microformats2.parse("http://example.org")
+```
 
 ## Dependencies
 
