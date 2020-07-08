@@ -1,4 +1,5 @@
 defmodule Microformats2.Items.Implied.Url do
+  @moduledoc false
   import Microformats2.Helpers
 
   def implied_value(root) do

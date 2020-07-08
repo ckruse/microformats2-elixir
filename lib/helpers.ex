@@ -1,4 +1,5 @@
 defmodule Microformats2.Helpers do
+  @moduledoc false
   @spec attr_list(String.t() | Floki.html_tree(), String.t()) :: [String.t()]
   def attr_list(node, attr \\ "class")
 

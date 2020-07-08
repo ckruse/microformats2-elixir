@@ -1,4 +1,5 @@
 defmodule Microformats2.Helpers.DateTimeNormalizer do
+  @moduledoc false
   import Microformats2.Helpers
 
   def normalized_time_format(time) do

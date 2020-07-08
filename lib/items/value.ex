@@ -1,4 +1,5 @@
 defmodule Microformats2.Items.Value do
+  @moduledoc false
   import Microformats2.Helpers
 
   alias Microformats2.Items

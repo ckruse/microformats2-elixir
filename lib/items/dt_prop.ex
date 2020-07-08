@@ -1,4 +1,5 @@
 defmodule Microformats2.Items.DtProp do
+  @moduledoc false
   import Microformats2.Helpers
 
   alias Microformats2.Helpers.DateTimeNormalizer

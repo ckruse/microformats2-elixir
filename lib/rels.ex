@@ -1,4 +1,5 @@
 defmodule Microformats2.Rels do
+  @moduledoc false
   import Microformats2.Helpers
 
   def parse(doc, base_url, opts) do
