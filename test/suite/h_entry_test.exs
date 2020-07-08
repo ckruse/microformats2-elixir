@@ -38,11 +38,10 @@ defmodule Microformats2.Suite.HEntryTest do
     assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
   end
 
-  # TODO: fails because of value class pattern
-  # test "u-property" do
-  #   {html, json} = suite_document("h-entry/u-property")
-  #   assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
-  # end
+  test "u-property" do
+    {html, json} = suite_document("h-entry/u-property")
+    assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
+  end
 
   test "urlincontent" do
     {html, json} = suite_document("h-entry/urlincontent")

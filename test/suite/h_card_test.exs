@@ -65,12 +65,7 @@ defmodule Microformats2.Suite.HCardTest do
 
   test "p-property" do
     {html, json} = suite_document("h-card/p-property")
-    doc = Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false)
-
-    # TODO: we don't yet support value class pattern
-    inner = doc["items"] |> List.first() |> update_in(["properties", "name"], fn _ -> ["JohnDoe"] end)
-
-    assert Map.put(doc, "items", [inner]) == json
+    assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
   end
 
   test "relativeurls" do

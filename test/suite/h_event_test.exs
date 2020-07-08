@@ -3,11 +3,10 @@ defmodule Microformats2.Suite.HEventTest do
 
   import Microformats2.TestUtils
 
-  # TODO: fails because of value class pattern
-  # test "ampm" do
-  #   {html, json} = suite_document("h-event/ampm")
-  #   assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
-  # end
+  test "ampm" do
+    {html, json} = suite_document("h-event/ampm")
+    assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
+  end
 
   test "attendees" do
     {html, json} = suite_document("h-event/attendees")
@@ -19,22 +18,20 @@ defmodule Microformats2.Suite.HEventTest do
     assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
   end
 
-  # TODO: fails because of value class pattern
-  # test "concatenate" do
-  #   {html, json} = suite_document("h-event/concatenate")
-  #   assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
-  # end
+  test "concatenate" do
+    {html, json} = suite_document("h-event/concatenate")
+    assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
+  end
 
   test "dates" do
     {html, json} = suite_document("h-event/dates")
     assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
   end
 
-  # TODO: fails because of value class pattern
-  # test "dt-property" do
-  #   {html, json} = suite_document("h-event/dt-property")
-  #   assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
-  # end
+  test "dt-property" do
+    {html, json} = suite_document("h-event/dt-property")
+    assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
+  end
 
   test "justahyperlink" do
     {html, json} = suite_document("h-event/justahyperlink")

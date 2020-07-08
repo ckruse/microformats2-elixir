@@ -3,7 +3,7 @@ defmodule Microformats2.Items.Implied do
 
   alias Microformats2.Items.Implied
 
-  def parse(entry, root, url, doc, opts) do
+  def parse({entry, _}, root, url, doc, opts) do
     entry
     |> implied_name_property(root, opts)
     |> implied_photo_property(root, url, doc, opts)

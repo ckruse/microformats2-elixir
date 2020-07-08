@@ -8,11 +8,10 @@ defmodule Microformats2.Suite.MixedTest do
     assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
   end
 
-  # TODO: fails because of value class pattern
-  # test "ignoretemplate" do
-  #   {html, json} = suite_document("mixed/ignoretemplate")
-  #   assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
-  # end
+  test "ignoretemplate" do
+    {html, json} = suite_document("mixed/ignoretemplate")
+    assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
+  end
 
   test "vendorprefix" do
     {html, json} = suite_document("mixed/vendorprefix")

@@ -3,6 +3,7 @@ defmodule Microformats2.Items do
 
   alias Microformats2.Items
   alias Microformats2.Items.Implied
+  alias Microformats2.ParserState
 
   def parse(nodes, doc, url, opts, items \\ [])
   def parse([head | tail], doc, url, opts, items) when is_bitstring(head), do: parse(tail, doc, url, opts, items)
@@ -22,7 +23,7 @@ defmodule Microformats2.Items do
         |> maybe_put_id(root, opts)
 
       entry =
-        parse_sub(children, doc, url, opts, item)
+        parse_sub(children, doc, url, opts, item, %ParserState{})
         |> Implied.parse(root, url, doc, opts)
 
       items ++ [entry]
@@ -39,50 +40,48 @@ defmodule Microformats2.Items do
       else: item
   end
 
-  defp parse_sub([], _, _, _, item), do: item
+  defp parse_sub([], _, _, _, item, state), do: {item, state}
 
-  defp parse_sub([child | children], doc, url, opts, item) when is_bitstring(child),
-    do: parse_sub(children, doc, url, opts, item)
+  defp parse_sub([child | children], doc, url, opts, item, state) when is_bitstring(child),
+    do: parse_sub(children, doc, url, opts, item, state)
 
-  defp parse_sub([child = {_, _, child_children} | children], doc, url, opts, item) do
+  defp parse_sub([child = {_, _, child_children} | children], doc, url, opts, item, state) do
     p =
-      if has_a?([child], "h") do
-        parse(child, doc, url, opts, []) |> List.first()
-      else
-        []
-      end
+      if has_a?([child], "h"),
+        do: parse(child, doc, url, opts, []) |> List.first(),
+        else: []
 
     classes =
       [child]
       |> attr_list()
       |> Enum.filter(&non_h_type?/1)
 
-    props = gen_prop(child, classes, item, p, doc, url, opts)
+    {props, state} = gen_prop(child, classes, item, p, doc, url, opts, state)
 
-    n_item =
+    {n_item, new_state} =
       if is_rootlevel?(child),
-        do: props,
-        else: parse_sub(child_children, doc, url, opts, props)
+        do: {props, state},
+        else: parse_sub(child_children, doc, url, opts, props, state)
 
-    parse_sub(children, doc, url, opts, n_item)
+    parse_sub(children, doc, url, opts, n_item, new_state)
   end
 
-  defp maybe_parse_prop(type, child, doc, url, opts) do
+  defp maybe_parse_prop(type, child, doc, url, opts, state) do
     if valid_mf2_name?(type),
-      do: parse_prop(type, child, doc, url, opts),
-      else: nil
+      do: parse_prop(type, child, doc, url, opts, state),
+      else: {nil, state}
   end
 
-  def parse_prop("p-" <> _, child, doc, url, _),
-    do: Items.PProp.parsed_prop(child, doc, url)
+  def parse_prop("p-" <> _, child, doc, url, _, state),
+    do: Items.PProp.parsed_prop(child, doc, url, state)
 
-  def parse_prop("u-" <> _, child, doc, url, opts),
-    do: Items.UProp.parsed_prop(child, doc, url, opts)
+  def parse_prop("u-" <> _, child, doc, url, opts, state),
+    do: Items.UProp.parsed_prop(child, doc, url, opts, state)
 
-  def parse_prop("dt-" <> _, child, _, _, _),
-    do: Items.DtProp.parsed_prop(child)
+  def parse_prop("dt-" <> _, child, _, _, _, state),
+    do: Items.DtProp.parsed_prop(child, state)
 
-  def parse_prop("e-" <> _, {_, _, children}, doc, url, opts) do
+  def parse_prop("e-" <> _, {_, _, children}, doc, url, opts, state) do
     updated_tree =
       Floki.traverse_and_update(children, fn element ->
         element
@@ -90,14 +89,14 @@ defmodule Microformats2.Items do
         |> update_url_attr("src", doc, url)
       end)
 
-    %{
-      normalized_key("html", opts) => updated_tree |> Floki.raw_html() |> stripped_or_nil(),
-      normalized_key("value", opts) =>
-        updated_tree |> cleanup_html() |> text_content(doc, url, &replaced_img_by_alt_or_src/3) |> stripped_or_nil()
-    }
+    {%{
+       normalized_key("html", opts) => updated_tree |> Floki.raw_html() |> stripped_or_nil(),
+       normalized_key("value", opts) =>
+         updated_tree |> cleanup_html() |> text_content(doc, url, &replaced_img_by_alt_or_src/3) |> stripped_or_nil()
+     }, state}
   end
 
-  def parse_prop(_, _, _, _, _), do: nil
+  def parse_prop(_, _, _, _, _, state), do: {nil, state}
 
   defp update_url_attr({element, attributes, children}, attr, doc, doc_url) do
     updated_attributes =
@@ -111,21 +110,27 @@ defmodule Microformats2.Items do
 
   defp update_url_attr(node, _, _, _), do: node
 
-  defp gen_prop(child, classes, item, p, doc, url, opts) do
-    props =
-      Enum.reduce(classes, item[normalized_key("properties", opts)], fn class, acc ->
-        prop =
-          if is_rootlevel?(child),
-            do: Map.put(p, normalized_key("value", opts), Items.Value.get_value(class, p, child, doc, url, opts)),
-            else: maybe_parse_prop(class, child, doc, url, opts)
+  defp gen_prop(child, classes, item, p, doc, url, opts, state) do
+    {props, new_state} =
+      Enum.reduce(classes, {item[normalized_key("properties", opts)], state}, fn class, {acc, state} ->
+        {prop, new_state} =
+          if is_rootlevel?(child) do
+            {value, new_state} = Items.Value.get_value(class, p, child, doc, url, opts, state)
+            {Map.put(p, normalized_key("value", opts), value), new_state}
+          else
+            maybe_parse_prop(class, child, doc, url, opts, state)
+          end
 
         key = normalized_key(strip_prefix(class), opts)
-        Map.update(acc, key, [prop], &(&1 ++ [prop]))
+        {Map.update(acc, key, [prop], &(&1 ++ [prop])), new_state}
       end)
 
-    if blank?(classes) and present?(p) and is_rootlevel?(child),
-      do: Map.update(item, normalized_key("children", opts), [p], &(&1 ++ [p])),
-      else: Map.put(item, normalized_key("properties", opts), props)
+    retval =
+      if blank?(classes) and present?(p) and is_rootlevel?(child),
+        do: Map.update(item, normalized_key("children", opts), [p], &(&1 ++ [p])),
+        else: Map.put(item, normalized_key("properties", opts), props)
+
+    {retval, new_state}
   end
 
   defp strip_prefix("p-" <> rest), do: rest

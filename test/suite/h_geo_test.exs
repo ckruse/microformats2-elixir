@@ -13,11 +13,10 @@ defmodule Microformats2.Suite.HGeoTest do
     assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
   end
 
-  # TODO: fails because of value class pattern
-  # test "hidden" do
-  #   {html, json} = suite_document("h-geo/hidden")
-  #   assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
-  # end
+  test "hidden" do
+    {html, json} = suite_document("h-geo/hidden")
+    assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
+  end
 
   test "justaname" do
     {html, json} = suite_document("h-geo/justaname")
@@ -29,9 +28,8 @@ defmodule Microformats2.Suite.HGeoTest do
     assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
   end
 
-  # TODO: fails because of value class pattern
-  # test "valuetitleclass" do
-  #   {html, json} = suite_document("h-geo/valuetitleclass")
-  #   assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
-  # end
+  test "valuetitleclass" do
+    {html, json} = suite_document("h-geo/valuetitleclass")
+    assert Microformats2.parse(html, "http://example.com", atomize_keys: false, underscore_keys: false) == json
+  end
 end
