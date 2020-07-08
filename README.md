@@ -8,7 +8,7 @@ This parser is [available in Hex](https://hex.pm/packages/microformats2):
 
 1. Add microformats2 to your list of dependencies in `mix.exs`:
 
-   ```
+   ```elixir
    def deps do
      [{:microformats2, "~> 0.3.1"}]
    end
@@ -16,7 +16,7 @@ This parser is [available in Hex](https://hex.pm/packages/microformats2):
 
 2. If you want to directly `parse` from URLs, add `tesla` to your list of dependencies in `mix.exs`:
 
-   ```
+   ```elixir
    def deps do
      [{:microformats2, "~> 0.3.1"},
       {:tesla, "~> 1.3.0"}]
@@ -27,42 +27,46 @@ This parser is [available in Hex](https://hex.pm/packages/microformats2):
 
 Give the parser an HTML string and the URL it was fetched from:
 
-    Microformats2.parse("""<div class="h-card">
-      <img class="u-photo" alt="photo of Mitchell"
-           src="https://webfwd.org/content/about-experts/300.mitchellbaker/mentor_mbaker.jpg"/>
-      <a class="p-name u-url"
-         href="http://blog.lizardwrangler.com/">Mitchell Baker</a>
-      (<a class="u-url" href="https://twitter.com/MitchellBaker">@MitchellBaker</a>)
-      <span class="p-org">Mozilla Foundation</span>
-      <p class="p-note">
-        Mitchell is responsible for setting the direction and scope of the Mozilla Foundation and its activities.
-      </p>
-      <span class="p-category">Strategy</span>
-      <span class="p-category">Leadership</span>
-    </div>
-    """, "http://localhost")
+```elixir
+Microformats2.parse("""<div class="h-card">
+  <img class="u-photo" alt="photo of Mitchell"
+        src="https://webfwd.org/content/about-experts/300.mitchellbaker/mentor_mbaker.jpg"/>
+  <a class="p-name u-url"
+      href="http://blog.lizardwrangler.com/">Mitchell Baker</a>
+  (<a class="u-url" href="https://twitter.com/MitchellBaker">@MitchellBaker</a>)
+  <span class="p-org">Mozilla Foundation</span>
+  <p class="p-note">
+    Mitchell is responsible for setting the direction and scope of the Mozilla Foundation and its activities.
+  </p>
+  <span class="p-category">Strategy</span>
+  <span class="p-category">Leadership</span>
+</div>
+""", "http://localhost")
+```
 
 It will parse the object to a structure like that:
 
+```elixir
+%{
+  rels: _,
+  rel_urls: _,
+  items: [
     %{
-      rels: _,
-      rel_urls: _,
-      items: [
-        %{
-          type: ["h-card"],
-          properties: %{
-            "photo" => ["https://webfwd.org/content/about-experts/300.mitchellbaker/mentor_mbaker.jpg"],
-            "name" => ["Mitchell Baker"],
-            "url" => ["http://blog.lizardwrangler.com/", "https://twitter.com/MitchellBaker"],
-            "org" => ["Mozilla Foundation"],
-            "note" => [
-              "Mitchell is responsible for setting the direction and scope of the Mozilla Foundation and its activities."
-            ],
-            "category" => ["Strategy", "Leadership"]
-          }
-        }
-      ]
+      type: ["h-card"],
+      properties: %{
+        "photo" => ["https://webfwd.org/content/about-experts/300.mitchellbaker/mentor_mbaker.jpg"],
+        "name" => ["Mitchell Baker"],
+        "url" => ["http://blog.lizardwrangler.com/", "https://twitter.com/MitchellBaker"],
+        "org" => ["Mozilla Foundation"],
+        "note" => [
+          "Mitchell is responsible for setting the direction and scope of the Mozilla Foundation and its activities."
+        ],
+        "category" => ["Strategy", "Leadership"]
+      }
     }
+  ]
+}
+```
 
 You can also provide HTML trees already parsed with Floki:
 
