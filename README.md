@@ -1,6 +1,6 @@
 # Microformats2
 
-A [Microformats2](http://microformats.org/wiki/microformats-2) parser for Elixir.
+A [Microformats2](http://microformats.org/wiki/microformats2) parser for Elixir.
 
 ## Installation
 
