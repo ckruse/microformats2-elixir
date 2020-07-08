@@ -1,17 +1,83 @@
 defmodule Microformats2 do
+  @moduledoc """
+  A [microformats2](http://microformats.org/wiki/microformats2) parser for elixir.
+  """
+
   alias Microformats2.Helpers
 
+  @type t :: map()
+
+  @doc """
+  Parse a document either by URL or by content. Returns a microformats2 parsing structure or `:error`.
+
+  ## Parameters
+
+    * `content_or_url` is either the HTML document or a URL
+    * `base_url_or_opts` is either the base URL of the document (if the first argument is a HTML string) or a
+      keyword list of options
+    * `opts` is an option list when the first argument is an HTML string
+
+  ## Options
+
+  Valid options are:
+
+    * `:atomize_keys`: `true` or `false`, defaults to `true`. Convert keys to atoms, e.g. `"rels"` to `:rels`
+    * `:underscore_keys`: `true` or `false`, `true` by default. Convert dashed keys to underscored keys, e.g. `rel-urls`
+      to `rel_urls`
+
+  ## Examples
+
+      iex> Microformats2.parse("http://example.org/")
+      %{rels: [], rel_urls: [], items: []}
+
+      iex> Microformats2.parse("http://example.org/", atomize_keys: false, underscore_keys: false)
+      %{"rels" => [], "rel-urls" => [], "items" => []}
+
+      iex> Microformats2.parse(\"\"\"
+      <div class="h-card">
+        <img class="u-photo" alt="photo of Mitchell"
+              src="https://webfwd.org/content/about-experts/300.mitchellbaker/mentor_mbaker.jpg"/>
+        <a class="p-name u-url" href="http://blog.lizardwrangler.com/">Mitchell Baker</a>
+        (<a class="u-url" href="https://twitter.com/MitchellBaker">@MitchellBaker</a>)
+        <span class="p-org">Mozilla Foundation</span>
+        <p class="p-note">
+          Mitchell is responsible for setting the direction and scope of the Mozilla Foundation and its activities.
+        </p>
+        <span class="p-category">Strategy</span>
+        <span class="p-category">Leadership</span>
+      </div>
+      \"\"\", "http://example.org")
+      %{
+        items: [
+          %{
+            properties: %{
+              category: ["Strategy", "Leadership"],
+              name: ["Mitchell Baker"],
+              note: ["Mitchell is responsible for setting the direction and scope of the Mozilla Foundation and its activities."],
+              org: ["Mozilla Foundation"],
+              photo: [
+                %{
+                  alt: "photo of Mitchell",
+                  value: "https://webfwd.org/content/about-experts/300.mitchellbaker/mentor_mbaker.jpg"
+                }
+              ],
+              url: ["http://blog.lizardwrangler.com/", "https://twitter.com/MitchellBaker"]
+            },
+            type: ["h-card"]
+          }
+        ],
+        rel_urls: %{},
+        rels: %{}
+      }
+  """
+  @spec parse(String.t() | Floki.html_tree(), String.t() | keyword(), keyword()) :: :error | t()
+  def parse(content_or_url, base_url_or_opts \\ [], opts \\ [])
+
   if Code.ensure_loaded?(Tesla) do
-    use Tesla
-    plug(Tesla.Middleware.FollowRedirects, max_redirects: 3)
-
-    @type t :: map()
-
-    @spec parse(String.t() | Floki.html_tree(), String.t() | keyword(), keyword()) :: :error | t()
-    def parse(content_or_url, base_url_or_opts \\ [], opts \\ [])
-
     def parse(url, opts, _) when is_list(opts) do
-      case get(url) do
+      client = Tesla.client([{Tesla.Middleware.FollowRedirects, max_redirects: 3}])
+
+      case Tesla.get(client, url) do
         {:ok, response} -> parse(response.body, url, opts)
         _ -> :error
       end
