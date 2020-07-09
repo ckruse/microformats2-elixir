@@ -107,11 +107,11 @@ Implemented:
 - nested microformat without associated property
 - [normalize u-\* property values](http://microformats.org/wiki/microformats2-parsing-faq#normalizing_u-.2A_property_values)
 - [value-class-pattern](http://microformats.org/wiki/value-class-pattern)
+- recognition of [vendor extensions](http://microformats.org/wiki/microformats2#VENDOR_EXTENSIONS)
 
 Not implemented:
 
 - [include-pattern](http://microformats.org/wiki/include-pattern)
-- recognition of [vendor extensions](http://microformats.org/wiki/microformats2#VENDOR_EXTENSIONS)
 - backwards compatible support for microformats v1
 
 ## License
