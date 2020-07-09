@@ -49,26 +49,27 @@ It will parse the object to a structure like that:
 
 ```elixir
 %{
-  items: [
+  "items" => [
     %{
-      properties: %{
-        category: ["Strategy", "Leadership"],
-        name: ["Mitchell Baker"],
-        note: ["Mitchell is responsible for setting the direction and scope of the Mozilla Foundation and its activities."],
-        org: ["Mozilla Foundation"],
-        photo: [
+      "properties" => %{
+        "category" => ["Strategy", "Leadership"],
+        "name" => ["Mitchell Baker"],
+        "note" => ["Mitchell is responsible for setting the direction and scope of the Mozilla Foundation and its activities."],
+        "org" => ["Mozilla Foundation"],
+        "photo" => [
           %{
-            alt: "photo of Mitchell",
-            value: "https://webfwd.org/content/about-experts/300.mitchellbaker/mentor_mbaker.jpg"
+            "alt" => "photo of Mitchell",
+            "value" => "https://webfwd.org/content/about-experts/300.mitchellbaker/mentor_mbaker.jpg"
           }
         ],
-        url: ["http://blog.lizardwrangler.com/", "https://twitter.com/MitchellBaker"]
+        "url" => ["http://blog.lizardwrangler.com/",
+         "https://twitter.com/MitchellBaker"]
       },
-      type: ["h-card"]
+      "type" => ["h-card"]
     }
   ],
-  rel_urls: %{},
-  rels: %{}
+  "rel-urls" => %{},
+  "rels" => %{}
 }
 ```
 

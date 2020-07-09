@@ -5,8 +5,6 @@ defmodule Microformats2 do
 
   alias Microformats2.Helpers
 
-  @type t :: map()
-
   @doc """
   Parse a document either by URL or by content. Returns a microformats2 parsing structure or `:error`.
 
@@ -21,17 +19,17 @@ defmodule Microformats2 do
 
   Valid options are:
 
-    * `:atomize_keys`: `true` or `false`, defaults to `true`. Convert keys to atoms, e.g. `"rels"` to `:rels`
-    * `:underscore_keys`: `true` or `false`, `true` by default. Convert dashed keys to underscored keys, e.g. `rel-urls`
-      to `rel_urls`
+    * `:atomize_keys`: `true` or `false`, defaults to `false`. Convert keys to atoms when true, e.g. `"rels"` to `:rels`
+    * `:underscore_keys`: `true` or `false`, `false` by default. Convert dashed keys to underscored keys when true,
+      e.g. `"rel-urls"` to `"rel_urls"` or `:"rel-urls"` to `:rel_urls`
 
   ## Examples
 
       iex> Microformats2.parse("http://example.org/")
-      %{rels: [], rel_urls: [], items: []}
-
-      iex> Microformats2.parse("http://example.org/", atomize_keys: false, underscore_keys: false)
       %{"rels" => [], "rel-urls" => [], "items" => []}
+
+      iex> Microformats2.parse("http://example.org/", atomize_keys: true, underscore_keys: true)
+      %{rels: [], rel_urls: [], items: []}
 
       iex> Microformats2.parse(\"\"\"
       <div class="h-card">
@@ -48,29 +46,30 @@ defmodule Microformats2 do
       </div>
       \"\"\", "http://example.org")
       %{
-        items: [
+        "items" => [
           %{
-            properties: %{
-              category: ["Strategy", "Leadership"],
-              name: ["Mitchell Baker"],
-              note: ["Mitchell is responsible for setting the direction and scope of the Mozilla Foundation and its activities."],
-              org: ["Mozilla Foundation"],
-              photo: [
+            "properties" => %{
+              "category" => ["Strategy", "Leadership"],
+              "name" => ["Mitchell Baker"],
+              "note" => ["Mitchell is responsible for setting the direction and scope of the Mozilla Foundation and its activities."],
+              "org" => ["Mozilla Foundation"],
+              "photo" => [
                 %{
-                  alt: "photo of Mitchell",
-                  value: "https://webfwd.org/content/about-experts/300.mitchellbaker/mentor_mbaker.jpg"
+                  "alt" => "photo of Mitchell",
+                  "value" => "https://webfwd.org/content/about-experts/300.mitchellbaker/mentor_mbaker.jpg"
                 }
               ],
-              url: ["http://blog.lizardwrangler.com/", "https://twitter.com/MitchellBaker"]
+              "url" => ["http://blog.lizardwrangler.com/",
+               "https://twitter.com/MitchellBaker"]
             },
-            type: ["h-card"]
+            "type" => ["h-card"]
           }
         ],
-        rel_urls: %{},
-        rels: %{}
+        "rel-urls" => %{},
+        "rels" => %{}
       }
   """
-  @spec parse(String.t() | Floki.html_tree(), String.t() | keyword(), keyword()) :: :error | t()
+  @spec parse(String.t() | Floki.html_tree(), String.t() | keyword(), keyword()) :: :error | map()
   def parse(content_or_url, base_url_or_opts \\ [], opts \\ [])
 
   if Code.ensure_loaded?(Tesla) do

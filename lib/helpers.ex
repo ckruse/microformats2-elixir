@@ -105,11 +105,11 @@ defmodule Microformats2.Helpers do
   @spec normalized_key(String.t(), keyword()) :: String.t() | atom()
   def normalized_key(key, opts) do
     norm_key =
-      if Keyword.get(opts, :underscore_keys, true),
+      if Keyword.get(opts, :underscore_keys, false),
         do: String.replace(key, "-", "_"),
         else: key
 
-    if Keyword.get(opts, :atomize_keys, true),
+    if Keyword.get(opts, :atomize_keys, false),
       do: String.to_atom(norm_key),
       else: norm_key
   end
