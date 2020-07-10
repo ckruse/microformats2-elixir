@@ -87,7 +87,7 @@ Microformats2.parse("http://example.org")
 
 ## Dependencies
 
-We need [Floki](https://github.com/philss/floki) for HTML parsing and
+We need [Floki](https://github.com/philss/floki) for HTML parsing and optionally
 [Tesla](https://github.com/teamon/tesla) for fetching URLs.
 
 ## Features
