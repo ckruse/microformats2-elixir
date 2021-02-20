@@ -22,7 +22,7 @@ defmodule Microformats2.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger]]
+    [extra_applications: [:logger]]
   end
 
   def description do
