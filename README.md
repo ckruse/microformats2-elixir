@@ -10,7 +10,7 @@ This parser is [available in Hex](https://hex.pm/packages/microformats2):
 
    ```elixir
    def deps do
-     [{:microformats2, "~> 0.7.2"}]
+     [{:microformats2, "~> 0.7.4"}]
    end
    ```
 
@@ -18,8 +18,8 @@ This parser is [available in Hex](https://hex.pm/packages/microformats2):
 
    ```elixir
    def deps do
-     [{:microformats2, "~> 0.7.2"},
-      {:tesla, "~> 1.4.1"}]
+     [{:microformats2, "~> 0.7.4"},
+      {:tesla, "~> 1.4.3"}]
    end
    ```
 
