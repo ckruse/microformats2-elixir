@@ -1,6 +1,6 @@
 defmodule Microformats2 do
   @moduledoc """
-  A [microformats2](http://microformats.org/wiki/microformats2) parser for elixir.
+  A [microformats2](http://microformats.org/wiki/microformats2) parser for Elixir.
   """
 
   alias Microformats2.Helpers
@@ -68,6 +68,7 @@ defmodule Microformats2 do
         "rel-urls" => %{},
         "rels" => %{}
       }
+
   """
   @spec parse(String.t() | Floki.html_tree(), String.t() | keyword(), keyword()) :: :error | map()
   def parse(content_or_url, base_url_or_opts \\ [], opts \\ [])
@@ -116,7 +117,7 @@ defmodule Microformats2 do
   end
 
   # this is a really ugly hack, but html5ever doesn't support template tags (it fails with a nif_panic),
-  # mochiweb has bugs whith whitespaces and I can't really get fast_html to work
+  # mochiweb has bugs with whitespaces and I can't really get fast_html to work
   defp parsed_document(content) do
     content
     |> replace_whitespaces()

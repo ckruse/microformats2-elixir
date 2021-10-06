@@ -1,17 +1,21 @@
 defmodule Microformats2.Mixfile do
   use Mix.Project
 
+  @source_url "https://github.com/ckruse/microformats2-elixir"
+  @version "0.7.4"
+
   def project do
     [
       app: :microformats2,
-      version: "0.7.4",
+      version: @version,
       elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
-      deps: deps()
+      deps: deps(),
+      docs: docs()
     ]
   end
 
@@ -36,25 +40,29 @@ defmodule Microformats2.Mixfile do
       files: ["lib", "mix.exs", "README.md", "LICENSE"],
       maintainers: ["Christian Kruse"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/ckruse/microformats2-elixir"}
+      links: %{"GitHub" => @source_url}
     ]
   end
 
-  # Dependencies can be Hex packages:
-  #
-  #   {:mydep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
-  #
-  # Type "mix help deps" for more examples and options
   defp deps do
     [
       {:floki, "~> 0.7"},
       {:tesla, "~> 1.4.0", optional: true},
-      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:jason, "~> 1.2", only: [:dev, :test]}
+    ]
+  end
+
+  defp docs do
+    [
+      extras: [
+        "LICENSE.md": [title: "License"],
+        "README.md": [title: "Overview"]
+      ],
+      main: "readme",
+      source_url: @source_url,
+      source_ref: @version,
+      formatters: ["html"]
     ]
   end
 end
