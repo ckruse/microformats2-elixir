@@ -1,27 +1,37 @@
 # Microformats2
 
+[![Module Version](https://img.shields.io/hexpm/v/microformats2.svg)](https://hex.pm/packages/microformats2)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/microformats2/)
+[![Total Download](https://img.shields.io/hexpm/dt/microformats2.svg)](https://hex.pm/packages/microformats2)
+[![License](https://img.shields.io/hexpm/l/microformats2.svg)](https://github.com/ckruse/microformats2-elixir/blob/master/LICENSE.md)
+[![Last Updated](https://img.shields.io/github/last-commit/ckruse/microformats2-elixir.svg)](https://github.com/ckruse/microformats2-elixir/commits/master)
+
 A [Microformats2](http://microformats.org/wiki/microformats2) parser for Elixir.
 
 ## Installation
 
-This parser is [available in Hex](https://hex.pm/packages/microformats2):
+The package can be installed by adding `:microformat2` to your list of
+dependencies in `mix.exs`:
 
-1. Add microformats2 to your list of dependencies in `mix.exs`:
+```elixir
+def deps do
+  [
+    {:microformats2, "~> 0.7.4"}
+  ]
+end
+```
 
-   ```elixir
-   def deps do
-     [{:microformats2, "~> 0.7.4"}]
-   end
-   ```
+If you want to directly `parse` from URLs, add `:tesla` to your list of
+dependencies in `mix.exs`:
 
-2. If you want to directly `parse` from URLs, add `tesla` to your list of dependencies in `mix.exs`:
-
-   ```elixir
-   def deps do
-     [{:microformats2, "~> 0.7.4"},
-      {:tesla, "~> 1.4.3"}]
-   end
-   ```
+```elixir
+def deps do
+  [
+    {:microformats2, "~> 0.7.4"},
+    {:tesla, "~> 1.4.3"}
+  ]
+end
+```
 
 ## Usage
 
@@ -114,6 +124,9 @@ Not implemented:
 - [include-pattern](http://microformats.org/wiki/include-pattern)
 - backwards compatible support for microformats v1
 
-## License
+## Copyright and License
 
-This software is licensed under the [MIT license](https://choosealicense.com/licenses/mit/).
+Copyright (c) 2018 Christian Kruse <cjk@defunct.ch>
+
+This work is free. You can redistribute it and/or modify it under the
+terms of the MIT License. See the [LICENSE.md](./LICENSE.md) file for more details.

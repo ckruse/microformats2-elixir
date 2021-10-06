@@ -480,7 +480,7 @@ defmodule Microformats2.ItemsTest do
                    "callsign" => ["W7APK"],
                    "name" => ["Aaron Parecki"],
                    "note" => [
-                     "Hi, I'm Aaron Parecki,  co-founder of\nIndieWebCamp.\nI maintain oauth.net, write and consult about OAuth, and\nam the editor of several W3C specfications. I record videos for local conferences and help run a podcast studio in Portland.\n\nI wrote 100 songs in 100 days! I've been tracking my location since 2008,\nand write down everything I eat and drink.\nI've spoken at conferences around the world about\nowning your data,\nOAuth,\nquantified self,\nand explained why R is a vowel. Read more."
+                     "Hi, I'm Aaron Parecki,  co-founder of\nIndieWebCamp.\nI maintain oauth.net, write and consult about OAuth, and\nam the editor of several W3C specifications. I record videos for local conferences and help run a podcast studio in Portland.\n\nI wrote 100 songs in 100 days! I've been tracking my location since 2008,\nand write down everything I eat and drink.\nI've spoken at conferences around the world about\nowning your data,\nOAuth,\nquantified self,\nand explained why R is a vowel. Read more."
                    ],
                    "org" => [
                      %{
