@@ -16,7 +16,7 @@ dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:microformats2, "~> 0.7.4"}
+    {:microformats2, "~> 1.0.0"}
   ]
 end
 ```
@@ -27,8 +27,8 @@ dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:microformats2, "~> 0.7.4"},
-    {:tesla, "~> 1.4.3"}
+    {:microformats2, "~> 1.0.0"},
+    {:tesla, "~> 1.4.4"}
   ]
 end
 ```
