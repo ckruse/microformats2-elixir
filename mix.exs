@@ -37,7 +37,7 @@ defmodule Microformats2.Mixfile do
 
   def package do
     [
-      files: ["lib", "mix.exs", "README.md", "LICENSE"],
+      files: ["lib", "mix.exs", "README.md", "LICENSE.md"],
       maintainers: ["Christian Kruse"],
       licenses: ["MIT"],
       links: %{"GitHub" => @source_url}
