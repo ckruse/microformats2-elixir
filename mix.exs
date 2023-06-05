@@ -8,7 +8,7 @@ defmodule Microformats2.Mixfile do
     [
       app: :microformats2,
       version: @version,
-      elixir: "~> 1.10",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
