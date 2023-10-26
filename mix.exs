@@ -47,7 +47,7 @@ defmodule Microformats2.Mixfile do
   defp deps do
     [
       {:floki, "~> 0.7"},
-      {:tesla, "~> 1.7.0", optional: true},
+      {:tesla, "~> 1.8.0", optional: true},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:jason, "~> 1.2", only: [:dev, :test]}
     ]
