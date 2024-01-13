@@ -632,24 +632,30 @@ defmodule Microformats2.ItemsTest do
                  "properties" => %{
                    "author" => [
                      %{
-                       "properties" => %{"name" => ["Jacky Alciné"], "photo" => ["http://localhost:9000/"]},
+                       "properties" => %{
+                         "name" => ["Jacky Alciné"],
+                         "photo" => ["http://localhost:9000/koype-dev/photos/floating/original_self-portrait.jpg"]
+                       },
                        "type" => ["h-card"],
-                       "value" => "http://localhost:9000/Jacky Alciné"
+                       "value" => "http://localhost:9000/"
+                     }
+                   ],
+                   "like-of" => [
+                     %{
+                       "properties" => %{
+                         "name" => ["67efebc0.ngrok.io"],
+                         "url" => ["http://67efebc0.ngrok.io/post/b5a600c5-98a0-4112-b2d5-9df7c600f5e2"]
+                       },
+                       "type" => ["h-cite"],
+                       "value" => "http://67efebc0.ngrok.io/post/b5a600c5-98a0-4112-b2d5-9df7c600f5e2"
                      }
                    ],
                    "name" => ["Liked\n          Liked\n          \n            67efebc0.ngrok.io"],
-                   "published" => ["7 minutes"],
+                   "published" => ["2018-12-19T00:19:04.410503Z"],
                    "summary" => ["Liked\n          Liked\n          \n            67efebc0.ngrok.io"],
-                   "uid" => ["http://localhost:9000/Permalink"],
-                   "updated" => ["7 minutes"],
-                   "url" => ["http://localhost:9000/Permalink"],
-                   "like-of" => [
-                     %{
-                       "properties" => %{"name" => ["67efebc0.ngrok.io"]},
-                       "type" => ["h-cite"],
-                       "value" => "http://localhost:9000/67efebc0.ngrok.io"
-                     }
-                   ]
+                   "uid" => ["http://localhost:9000/post/a4ab5c98-c476-4800-9f09-2f7f5a337f32"],
+                   "updated" => ["2018-12-19 00:19:04.406330"],
+                   "url" => ["http://localhost:9000/post/a4ab5c98-c476-4800-9f09-2f7f5a337f32"]
                  },
                  "type" => ["h-entry"]
                }
@@ -661,7 +667,7 @@ defmodule Microformats2.ItemsTest do
                }
              },
              "rels" => %{"me" => ["http://localhost:9000/"]}
-           } = Microformats2.parse(str, "http://localhost:9000")
+           } == Microformats2.parse(str, "http://localhost:9000")
   end
 
   test "uses symbols as keys" do

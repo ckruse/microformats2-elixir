@@ -125,5 +125,16 @@ defmodule Microformats2 do
     |> String.replace(~r/\012/, "&#x0A;")
     |> String.replace(~r/\013/, "&#x0B;")
     |> Floki.parse_document()
+    |> normalize_tag_names()
   end
+
+  defp normalize_tag_names({:ok, tree}) do
+    {:ok,
+     Floki.traverse_and_update(tree, fn
+       {tag, attrs, children} -> {String.trim(tag), attrs, children}
+       other -> other
+     end)}
+  end
+
+  defp normalize_tag_names(other), do: other
 end
