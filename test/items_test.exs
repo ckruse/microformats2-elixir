@@ -663,7 +663,7 @@ defmodule Microformats2.ItemsTest do
              "rel-urls" => %{
                "http://localhost:9000/" => %{
                  "rels" => ["me"],
-                 "text" => "\n                \n                Jacky Alciné\n              \n            "
+                 "text" => "\n                \n                Jacky Alciné\n              "
                }
              },
              "rels" => %{"me" => ["http://localhost:9000/"]}

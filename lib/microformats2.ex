@@ -107,34 +107,66 @@ defmodule Microformats2 do
     }
   end
 
-  defp replace_whitespaces(text, last_text \\ "")
-  defp replace_whitespaces(text, last_text) when last_text == text, do: text
+  defp escape_whitespaces(<<>>, new_content, _, _, _, _), do: new_content
 
-  defp replace_whitespaces(text, _) do
-    text
-    |> String.replace(~r/>((&#32;)*) ( *)</, ">\\g{1}&#32;\\g{3}<")
-    |> replace_whitespaces(text)
+  defp escape_whitespaces(<<cp::utf8, rest::binary>>, new_content, in_tag, in_attr, end_quote, in_special) do
+    char = <<cp::utf8>>
+
+    cond do
+      # special tags: start
+      char == "<" && in_tag == false && String.match?(rest, ~r/\A(style|script|svg)[\s>]/) ->
+        escape_whitespaces(rest, new_content <> char, false, false, "", true)
+
+      char == "<" && in_special && String.match?(rest, ~r/\A\/(style|script|svg)[\s>]/) ->
+        escape_whitespaces(rest, new_content <> char, true, false, "", false)
+
+      in_special ->
+        escape_whitespaces(rest, new_content <> char, in_tag, in_attr, end_quote, in_special)
+
+      char == end_quote && in_tag && in_attr ->
+        escape_whitespaces(rest, new_content <> char, in_tag, false, "", in_special)
+
+      char in ["\"", "'"] && in_tag && !in_attr ->
+        escape_whitespaces(rest, new_content <> char, in_tag, true, char, in_special)
+
+      char in ["<", ">"] && in_attr ->
+        escape_whitespaces(rest, new_content <> char, in_tag, in_attr, end_quote, in_special)
+
+      # tag ends
+      char == ">" && in_tag == true && in_special == false ->
+        escape_whitespaces(rest, new_content <> char, false, false, "", false)
+
+      # tag starts
+      char == "<" && in_tag == false ->
+        escape_whitespaces(rest, new_content <> char, true, false, "", false)
+
+      # whitespaces
+      char == " " && in_tag == false ->
+        escape_whitespaces(rest, new_content <> "&#32;", in_tag, in_attr, end_quote, in_special)
+
+      char == "\n" && in_tag == false ->
+        escape_whitespaces(rest, new_content <> "&#x0A;", in_tag, in_attr, end_quote, in_special)
+
+      char == "\v" && in_tag == false ->
+        escape_whitespaces(rest, new_content <> "&#x0B;", in_tag, in_attr, end_quote, in_special)
+
+      char == "\r" && in_tag == false ->
+        escape_whitespaces(rest, new_content <> "&#x0D;", in_tag, in_attr, end_quote, in_special)
+
+      true ->
+        escape_whitespaces(rest, new_content <> char, in_tag, in_attr, end_quote, in_special)
+    end
   end
 
   # this is a really ugly hack, but html5ever doesn't support template tags (it fails with a nif_panic),
   # mochiweb has bugs with whitespaces and I can't really get fast_html to work
   defp parsed_document(content) do
     content
-    |> replace_whitespaces()
-    |> String.replace(~r/\015/, "&#x0D;")
-    |> String.replace(~r/\012/, "&#x0A;")
-    |> String.replace(~r/\013/, "&#x0B;")
+    |> escape_whitespaces("", false, false, "", false)
     |> Floki.parse_document()
-    |> normalize_tag_names()
-  end
 
-  defp normalize_tag_names({:ok, tree}) do
-    {:ok,
-     Floki.traverse_and_update(tree, fn
-       {tag, attrs, children} -> {String.trim(tag), attrs, children}
-       other -> other
-     end)}
-  end
+    # |> IO.inspect()
 
-  defp normalize_tag_names(other), do: other
+    # |> normalize_tag_names()
+  end
 end

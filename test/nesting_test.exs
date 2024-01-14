@@ -25,11 +25,11 @@ defmodule Microformats2.NestingTest do
                        "value" => "Zachary Dunn"
                      }
                    ],
+                   "category" => ["IndieWeb", "tech", "decentralization"],
                    "published" => ["2024-01-09 17:11:10Z"],
                    "repost-of" => [
                      %{
                        "properties" => %{
-                         "category" => ["IndieWeb", "tech", "decentralization"],
                          "name" => ["gilest.org: Make the indie web easier"],
                          "url" => ["https://gilest.org/indie-easy.html"]
                        },
