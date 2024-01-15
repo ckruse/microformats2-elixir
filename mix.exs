@@ -2,7 +2,7 @@ defmodule Microformats2.Mixfile do
   use Mix.Project
 
   @source_url "https://github.com/ckruse/microformats2-elixir"
-  @version "1.0.0"
+  @version "1.0.1"
 
   def project do
     [
